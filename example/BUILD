@@ -20,8 +20,9 @@ cc_binary(
         "example1.cc",
     ],
     deps = [
-        ":stm32f411.ld",
+        "@com_github_ARMmbed_mbed-os//:mbed",
+        "@com_github_ARMmbed_mbed-os//:linker_script.ld",
     ],
-    linkopts = ["-T $(location :stm32f411.ld)"],
+    linkopts = ["-T $(location @com_github_ARMmbed_mbed-os//:linker_script.ld)"],
     linkstatic = 1,
 )

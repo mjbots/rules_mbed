@@ -138,6 +138,12 @@ toolchain {
   cxx_flag: "-fno-rtti"
   cxx_flag: "-fno-exceptions"
 
+  # This will cause the mbed allocation wrapper object to not be
+  # dropped on the floor.  (the mbed toolchain links everything as .o
+  # files, with no intermediate .a files, so this isn't a problem
+  # there).
+  linker_flag: "-Wl,--undefined=__wrap__free_r"
+
   linker_flag: "-Wl,--gc-sections"
 
   linker_flag: "-Wl,--wrap,main"

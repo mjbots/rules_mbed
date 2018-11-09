@@ -35,7 +35,9 @@ def strip_cpp_args(input_args):
 
 
 def main():
-    is_a_c_file_present = len([x for x in sys.argv if x.endswith(".c")]) > 0
+    is_a_c_file_present = len(
+        [x for x in sys.argv
+         if x.endswith(".c") or x.endswith(".S")]) > 0
 
     def run(path, args):
         os.execv(path, [path] + args[1:])

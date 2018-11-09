@@ -3,3 +3,6 @@ test --compiler=gcc
 
 build --crosstool_top=//tools/cc_toolchain:toolchain
 test --crosstool_top=//tools/cc_toolchain:toolchain
+
+build --nostart_end_lib
+test --nostart_end_lib

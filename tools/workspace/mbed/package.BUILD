@@ -14,6 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+package(default_visibility = ["//visibility:public"])
+
 
 # Yay, The mbed source is full of circular dependencies.  About the
 # best we can do is lump everything into one giant cc_library and suck
@@ -89,9 +91,13 @@ cc_library(
     ],
 )
 
-filegroup(
-    name = "linker_script",
-    srcs = [
-        @LINKER_SCRIPT@
-    ]
+genrule(
+    name = "preprocess_linker_script",
+    srcs = ["linker_script.ld.in"],
+    outs = ["linker_script.ld"],
+    tools = [
+        "@com_arm_developer_gcc//:everything",
+        "@com_arm_developer_gcc//:cpp",
+    ],
+    cmd = "$(location @com_arm_developer_gcc//:cpp) -P $< -o $@",
 )

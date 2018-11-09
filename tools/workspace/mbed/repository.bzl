@@ -102,16 +102,21 @@ def _impl(repository_ctx):
         "rtos/*.h",
         "rtos/TARGET_CORTEX/**/*.h",
     ]
+
     src_globs = [
         "platform/*.c",
+        "platform/*.cpp",
         "drivers/*.cpp",
         "cmsis/TARGET_CORTEX_M/*.c",
         "hal/*.c",
         "rtos/TARGET_CORTEX/*.c",
         "rtos/TARGET_CORTEX/*.cpp",
+        "rtos/TARGET_CORTEX/rtx5/RTX/Source/*.c",
+        "rtos/TARGET_CORTEX/rtx5/Source/*.c",
         "rtos/TARGET_CORTEX/TOOLCHAIN_GCC_ARM/*.c",
         "rtos/*.cpp",
     ]
+
     includes = [
         # ".",
         # "platform",
@@ -155,7 +160,8 @@ def _impl(repository_ctx):
         src_globs += [
             "{}/*.c".format(remaining_target),
             "{}/*.cpp".format(remaining_target),
-            "{}/device/TOOLCHAIN_GCC_ARM/*.S",
+            "{}/device/*.c".format(remaining_target),
+            "{}/device/TOOLCHAIN_GCC_ARM/*.S".format(remaining_target),
         ]
         copts += [
             "-I{}/{}".format(PREFIX, remaining_target),
@@ -165,7 +171,7 @@ def _impl(repository_ctx):
         # Does this directory contain the linker script?
 
         linker_search_path = "{}/device/TOOLCHAIN_GCC_ARM/".format(remaining_target)
-        find_result = repository_ctx.execute(["find", linker_search_path, '-name', '*.S'])
+        find_result = repository_ctx.execute(["find", linker_search_path, '-name', '*.ld'])
         if find_result.return_code == 0 and len(find_result.stdout) > 0:
             linker_script = find_result.stdout.strip()
 
@@ -179,7 +185,6 @@ def _impl(repository_ctx):
         '@HDR_GLOBS@' : _render_list(hdr_globs),
         '@SRC_GLOBS@' : _render_list(src_globs),
         '@INCLUDES@' : _render_list(includes),
-        '@LINKER_SCRIPT@' : '"{}"'.format(linker_script),
         '@COPTS@' : _render_list(copts),
     }
 
@@ -188,6 +193,8 @@ def _impl(repository_ctx):
         repository_ctx.attr.build_file_template,
         substitutions = substitutions,
     )
+
+    repository_ctx.symlink(linker_script, "linker_script.ld.in")
 
 _mbed_repository = repository_rule(
     implementation = _impl,

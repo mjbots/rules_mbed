@@ -14,8 +14,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+package(default_visibility = ["//visibility:public"])
+
 filegroup(
     name = "everything",
     srcs = glob(["**"]),
-    visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "gcc",
+    srcs = ["bin/arm-none-eabi-gcc"],
+)
+
+filegroup(
+    name = "cpp",
+    srcs = ["bin/arm-none-eabi-cpp"],
 )
