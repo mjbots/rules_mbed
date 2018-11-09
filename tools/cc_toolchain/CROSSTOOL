@@ -45,14 +45,6 @@ toolchain {
 
   linker_flag: "-Wl,--gc-sections"
 
-  # linker_flag: "-Wl,--wrap,main"
-  # linker_flag: "-Wl,--wrap,_malloc_r",
-  # linker_flag: "-Wl,--wrap,_free_r"
-  # linker_flag: "-Wl,--wrap,_realloc_r"
-  # linker_flag: "-Wl,--wrap,_memalign_r"
-  # linker_flag: "-Wl,--wrap,_calloc_r"
-  # linker_flag: "-Wl,--wrap,exit"
-  # linker_flag: "-Wl,--wrap,atexit"
   linker_flag: "-Wl,-n"
 
   linker_flag: "-Wl,--start-group"
@@ -199,7 +191,7 @@ toolchain {
 
   tool_path {name: "ar" path: "wrapper/arm-none-eabi-ar" }
   tool_path {name: "cpp" path: "wrapper/arm-none-eabi-cpp" }
-  tool_path {name: "gcc" path: "wrapper/arm-none-eabi-gcc" }
+  tool_path {name: "gcc" path: "wrapper/arm-none-eabi-g++" }
   tool_path {name: "gcov" path: "wrapper/arm-none-eabi-gcov" }
   tool_path {name: "ld" path: "wrapper/arm-none-eabi-ld" }
   tool_path {name: "nm" path: "wrapper/arm-none-eabi-nm" }

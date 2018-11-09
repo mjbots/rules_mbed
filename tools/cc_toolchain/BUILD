@@ -21,6 +21,7 @@ cc_toolchain_suite(
     toolchains = {
         "k8|gcc": "cc_toolchain_linux",
         "stm32f4|gcc": "cc_toolchain_armeabihf_stm32f4",
+        "stm32f4-mbed|gcc": "cc_toolchain_armeabihf_stm32f4_mbed",
     },
 )
 
@@ -64,4 +65,19 @@ cc_toolchain(
     strip_files = ":empty",
     supports_param_files = 0,
     toolchain_identifier = "gcc-armeabihf-stm32f4",
+)
+
+cc_toolchain(
+    name = "cc_toolchain_armeabihf_stm32f4_mbed",
+    all_files = ":everything",
+    compiler_files = ":everything",
+    cpu = "armeabihf",
+    dwp_files = ":empty",
+    dynamic_runtime_libs = [":empty"],
+    linker_files = ":everything",
+    objcopy_files = ":empty",
+    static_runtime_libs = [":empty"],
+    strip_files = ":empty",
+    supports_param_files = 0,
+    toolchain_identifier = "gcc-armeabihf-stm32f4-mbed",
 )
