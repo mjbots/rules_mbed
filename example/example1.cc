@@ -14,10 +14,12 @@
 
 #include <stdio.h>
 
-extern "C" {
-int main(int, char**) {
-  printf("hello there!\n");
-  return 0;
-}
+#include "mbed.h"
 
+int main(int, char**) {
+  for (;;) {
+    printf("hello there!\n");
+    wait(1.0);
+  }
+  return 0;
 }

@@ -29,7 +29,7 @@ DEFAULT_CONFIG = {
     "MBED_CONF_EVENTS_USE_LOWPOWER_TIMER_TICKER": "0",
     "MBED_CONF_PLATFORM_DEFAULT_SERIAL_BAUD_RATE": "9600",
     "MBED_CONF_PLATFORM_ERROR_ALL_THREADS_INFO": "0",
-    "MBED_CONF_PLATFORM_ERROR_DECODE_HTTP_URL_STR": "\"\"",
+    "MBED_CONF_PLATFORM_ERROR_DECODE_HTTP_URL_STR": r'\\\"\\\"',
     "MBED_CONF_PLATFORM_ERROR_FILENAME_CAPTURE_ENABLED": "0",
     "MBED_CONF_PLATFORM_ERROR_HIST_ENABLED": "0",
     "MBED_CONF_PLATFORM_ERROR_HIST_SIZE": "4",
@@ -83,8 +83,6 @@ def _impl(repository_ctx):
 #endif
 """.format(defines)
 
-    repository_ctx.file("mbed_config.h", mbed_config, executable=False)
-
     # Since mbed is full of circular dependencies, we just construct
     # the full set of headers and sources here, then pass it down into
     # the BUILD file verbatim for using in a single bazel label.
@@ -98,7 +96,6 @@ def _impl(repository_ctx):
         "cmsis/*.h",
         "cmsis/TARGET_CORTEX_M/*.h",
         "hal/*.h",
-        "mbed_config.h",
         "rtos/*.h",
         "rtos/TARGET_CORTEX/**/*.h",
     ]
@@ -118,34 +115,27 @@ def _impl(repository_ctx):
     ]
 
     includes = [
-        # ".",
-        # "platform",
-        # "drivers",
-        # "cmsis/TARGET_CORTEX_M",
+        ".",
+        "platform",
+        "drivers",
+        "cmsis/TARGET_CORTEX_M",
+        "cmsis".format(PREFIX),
+        "hal".format(PREFIX),
+        "rtos".format(PREFIX),
+        "rtos/TARGET_CORTEX",
+        "rtos/TARGET_CORTEX/rtx4",
+        "rtos/TARGET_CORTEX/rtx5/Include",
+        "rtos/TARGET_CORTEX/rtx5/Source",
+        "rtos/TARGET_CORTEX/rtx5/RTX/Include",
+        "rtos/TARGET_CORTEX/rtx5/RTX/Source",
+        "rtos/TARGET_CORTEX/rtx5/RTX/Config",
     ]
     copts = [
         "-Wno-unused-parameter",
         "-Wno-missing-field-initializers",
         "-Wno-register",
         "-Wno-deprecated-declarations",
-
-        # We put these in here instead of 'includes' until we get an
-        # ARM GCC that has correct "NO_IMPLICIT_EXTERN_C" behavior.
-        "-I{}".format(PREFIX),
-        "-I{}/platform".format(PREFIX),
-        "-I{}/drivers".format(PREFIX),
-        "-I{}/cmsis".format(PREFIX),
-        "-I{}/cmsis/TARGET_CORTEX_M".format(PREFIX),
-        "-I{}/hal".format(PREFIX),
-        "-I{}/rtos".format(PREFIX),
-        "-I{}/rtos/TARGET_CORTEX".format(PREFIX),
-        "-I{}/rtos/TARGET_CORTEX/rtx4".format(PREFIX),
-        "-I{}/rtos/TARGET_CORTEX/rtx5/Include".format(PREFIX),
-        "-I{}/rtos/TARGET_CORTEX/rtx5/Source".format(PREFIX),
-        "-I{}/rtos/TARGET_CORTEX/rtx5/RTX/Include".format(PREFIX),
-        "-I{}/rtos/TARGET_CORTEX/rtx5/RTX/Source".format(PREFIX),
-        "-I{}/rtos/TARGET_CORTEX/rtx5/RTX/Config".format(PREFIX),
-        "-include mbed_config.h",
+        "-Wno-sized-deallocation",
     ]
 
     linker_script = ""
@@ -163,9 +153,9 @@ def _impl(repository_ctx):
             "{}/device/*.c".format(remaining_target),
             "{}/device/TOOLCHAIN_GCC_ARM/*.S".format(remaining_target),
         ]
-        copts += [
-            "-I{}/{}".format(PREFIX, remaining_target),
-            "-I{}/{}/device".format(PREFIX, remaining_target),
+        includes += [
+            remaining_target,
+            "{}/device".format(remaining_target),
         ]
 
         # Does this directory contain the linker script?
@@ -181,11 +171,15 @@ def _impl(repository_ctx):
 
         remaining_target = items[0]
 
+    defines = ["{}={}".format(key, value)
+               for key, value in repository_ctx.attr.config.items()]
+
     substitutions = {
-        '@HDR_GLOBS@' : _render_list(hdr_globs),
-        '@SRC_GLOBS@' : _render_list(src_globs),
-        '@INCLUDES@' : _render_list(includes),
-        '@COPTS@' : _render_list(copts),
+        '@HDR_GLOBS@': _render_list(hdr_globs),
+        '@SRC_GLOBS@': _render_list(src_globs),
+        '@INCLUDES@': _render_list(includes),
+        '@COPTS@': _render_list(copts),
+        '@DEFINES@': _render_list(defines),
     }
 
     repository_ctx.template(

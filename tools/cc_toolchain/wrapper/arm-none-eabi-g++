@@ -26,6 +26,8 @@ def is_cpp_arg(x):
         return True
     if x == "-Wno-register":
         return True
+    if x == "-Wno-sized-deallocation":
+        return True
 
     return False
 
@@ -34,18 +36,27 @@ def strip_cpp_args(input_args):
     return [x for x in input_args if not is_cpp_arg(x)]
 
 
+def run(path, args):
+    os.execv(path, [path] + args[1:])
+
+
 def main():
+    args = sys.argv[:]
+
+    # The ARM GCC has -isystem busted, and forces all headers found
+    # through that path to be C only.  Bazel passes all includes as
+    # "-isystem", which doesn't interact very well with gcc.  Lets
+    # just fix that here.
+    args = [(x if x != "-isystem" else "-I") for x in args]
+
     is_a_c_file_present = len(
-        [x for x in sys.argv
+        [x for x in args
          if x.endswith(".c") or x.endswith(".S")]) > 0
 
-    def run(path, args):
-        os.execv(path, [path] + args[1:])
-
     if not is_a_c_file_present:
-        run("external/com_arm_developer_gcc/bin/arm-none-eabi-g++", sys.argv)
+        run("external/com_arm_developer_gcc/bin/arm-none-eabi-g++", args)
     else:
-        run("external/com_arm_developer_gcc/bin/arm-none-eabi-gcc", strip_cpp_args(sys.argv))
+        run("external/com_arm_developer_gcc/bin/arm-none-eabi-gcc", strip_cpp_args(args))
 
 
 if __name__ == '__main__':

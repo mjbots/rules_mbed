@@ -25,4 +25,8 @@ cc_binary(
     ],
     linkopts = ["-T $(location @com_github_ARMmbed_mbed-os//:linker_script.ld)"],
     linkstatic = 1,
+    copts = [
+        "-Wno-register",
+        "-Wno-unused-parameter",
+    ],
 )

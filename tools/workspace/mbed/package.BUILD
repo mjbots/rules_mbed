@@ -88,7 +88,7 @@ cc_library(
         "DEVICE_SPI_ASYNCH",
         "DEVICE_STDIO_MESSAGES",
         "DEVICE_USTICKER",
-    ],
+    ] + @DEFINES@,
 )
 
 genrule(
