@@ -16,6 +16,12 @@
 
 cc_binary(
     name = "example1",
-    srcs = ["example1.cc"],
+    srcs = [
+        "example1.cc",
+    ],
+    deps = [
+        ":stm32f411.ld",
+    ],
+    linkopts = ["-T $(location :stm32f411.ld)"],
     linkstatic = 1,
 )
