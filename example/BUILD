@@ -30,3 +30,12 @@ cc_binary(
         "-Wno-unused-parameter",
     ],
 )
+
+genrule(
+    name = "example1_bin",
+    srcs = [":example1"],
+    outs = ["example1.bin"],
+    tools = ["@com_arm_developer_gcc//:objcopy"],
+    cmd = "$(location @com_arm_developer_gcc//:objcopy) -O binary $< $@",
+    output_to_bindir = True,
+)

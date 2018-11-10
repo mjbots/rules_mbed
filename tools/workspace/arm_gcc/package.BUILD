@@ -30,3 +30,8 @@ filegroup(
     name = "cpp",
     srcs = ["bin/arm-none-eabi-cpp"],
 )
+
+filegroup(
+    name = "objcopy",
+    srcs = ["bin/arm-none-eabi-objcopy"],
+)

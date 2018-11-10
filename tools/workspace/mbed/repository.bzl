@@ -110,6 +110,7 @@ def _impl(repository_ctx):
         "rtos/TARGET_CORTEX/*.cpp",
         "rtos/TARGET_CORTEX/rtx5/RTX/Source/*.c",
         "rtos/TARGET_CORTEX/rtx5/Source/*.c",
+        "rtos/TARGET_CORTEX/rtx5/RTX/Source/TOOLCHAIN_GCC/TARGET_RTOS_M4_M7/*.S",
         "rtos/TARGET_CORTEX/TOOLCHAIN_GCC_ARM/*.c",
         "rtos/*.cpp",
     ]
