@@ -15,6 +15,8 @@
 # limitations under the License.
 
 load("@bazel_tools//tools/build_defs/repo:utils.bzl", "patch")
+load("//tools/workspace/mbed:json.bzl", "parse_json")
+
 
 DEFAULT_CONFIG = {
     "CLOCK_SOURCE": "USE_PLL_HSE_EXTC|USE_PLL_HSI",
@@ -60,6 +62,77 @@ def _render_list(data):
     return result
 
 
+def _get_target_defines(repository_ctx, target_path):
+    target_name = target_path.rsplit('/', 1)[1]
+    if not target_name.startswith("TARGET_"):
+        fail("Final target directory does not start with TARGET_")
+
+    first_target = target_name.split("TARGET_")[1]
+
+
+    targets_results = repository_ctx.execute(["cat", "targets/targets.json"])
+    if targets_results.return_code != 0:
+        fail("error reading targets.json")
+
+    targets = parse_json(targets_results.stdout)
+
+    to_query = [first_target]
+
+    # This aggregation would be natural to do recursively.  However,
+    # Starlark of course does not support that.  Thus, we'll just
+    # emulate the recursion with a local stack that we collapse at the
+    # end.
+
+    # Contains length 2 lists, where the first element are things to
+    # add, and the second element are things to remove.
+    stack = []
+
+    for i in range(100):
+        if len(to_query) == 0:
+            break
+
+        target = to_query[0]
+        to_query = to_query[1:]
+
+        if target not in targets:
+            fail("Could not find '{}' in targets.json".format(target))
+
+        stack = stack + [[[], []]]
+        this_stack = stack[-1]
+
+        this_stack[0] += ["TARGET_{}".format(target)]
+
+        item = targets[target]
+
+        this_stack[0] += ["DEVICE_{}".format(x) for x in item.get("device_has", [])]
+        this_stack[0] += ["DEVICE_{}".format(x) for x in item.get("device_has_add", [])]
+        this_stack[1] += ["DEVICE_{}".format(x) for x in item.get("device_has_remove", [])]
+
+        this_stack[0] += ["TARGET_{}".format(x) for x in item.get("extra_labels", [])]
+        this_stack[0] += ["TARGET_{}".format(x) for x in item.get("extra_labels_add", [])]
+        this_stack[1] += ["TARGET_{}".format(x) for x in item.get("extra_labels_remove", [])]
+
+        if "device_name" in item:
+            this_stack[0] += ["TARGET_{}".format(item["device_name"])]
+
+        this_stack[0] += item.get("macros", [])
+        this_stack[0] += item.get("macros_add", [])
+        this_stack[1] += item.get("macros_remove", [])
+
+        this_stack[0] += ["TARGET_FF_{}".format(x) for x in item.get("supported_form_factors", [])]
+
+        to_query += item.get("inherits", [])
+
+    result = {}
+    for to_add, to_remove in reversed(stack):
+        for item in to_add:
+            result[item] = None
+        for item in to_remove:
+            result.pop(item)
+
+    return sorted(result.keys())
+
+
 def _impl(repository_ctx):
     PREFIX = "external/{}".format(repository_ctx.name)
 
@@ -72,16 +145,6 @@ def _impl(repository_ctx):
     )
     patch(repository_ctx)
 
-    defines = '\n'.join(["#define {} {}".format(key, value)
-                         for key, value in repository_ctx.attr.config.items()])
-    mbed_config = """
-#ifndef __MBED_CONFIG_DATA__
-#define __MBED_CONFIG_DATA__
-
-{}
-
-#endif
-""".format(defines)
 
     # Since mbed is full of circular dependencies, we just construct
     # the full set of headers and sources here, then pass it down into
@@ -143,6 +206,10 @@ def _impl(repository_ctx):
 
     # Walk up the target path adding directories as we go.
     remaining_target = target
+
+    # This would naturally be expressed as a 'while' loop.  Instead
+    # we'll just encode a maximum size that is way more than enough.
+    # Go Starlark.
     for i in range(1000):
         hdr_globs += [
             "{}/*.h".format(remaining_target),
@@ -174,6 +241,8 @@ def _impl(repository_ctx):
 
     defines = ["{}={}".format(key, value)
                for key, value in repository_ctx.attr.config.items()]
+
+    defines += _get_target_defines(repository_ctx, target)
 
     substitutions = {
         '@HDR_GLOBS@': _render_list(hdr_globs),

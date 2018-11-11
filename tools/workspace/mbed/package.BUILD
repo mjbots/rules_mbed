@@ -39,55 +39,26 @@ cc_library(
         "__MBED__",
         "__FPU_PRESENT",
         "__CMSIS_RTOS",
-        "__CORTEX_M4",
         "__MBED_CMSIS_RTOS_CM",
-        "ARM_MATH_CM4",
         "TOOLCHAIN_GCC",
         "TOOLCHAIN_GCC_ARM",
 
-        # TODO(jpieper): Configure the following defines based on
-        # target.
+        # TODO(jpieper): These defines are hard-coded for Cortex-M4
+        # cores.  If we want to support something else, we'll need to
+        # figure out how to derive it (and the associated source file
+        # changes) from targets.json or wherever that is supposed to
+        # come from.
+        "ARM_MATH_CM4",
+        "__CORTEX_M4",
         "TARGET_RTOS_M4_M7",
-        "TARGET_STM32F4",
-        "TARGET_STM32F446xE",
         "TARGET_CORTEX_M",
         "TARGET_LIKE_CORTEX_M4",
         "TARGET_M4",
         "TARGET_CORTEX",
-        "TARGET_STM32F446ZE",
 
-        "TARGET_FAMILY_STM32",
-        "TARGET_FF_MORPHO",
-        "TARGET_FF_ARDUINO",
-        "TARGET_STM",
         "TARGET_RELEASE",
-        "TARGET_NUCLEO_F446ZE",
         "TARGET_LIKE_MBED",
 
-        "USBHOST_OTHER",
-        "USB_STM_HAL",
-
-        "DEVICE_ANALOGIN",
-        "DEVICE_ANALOGOUT",
-        "DEVICE_CAN",
-        "DEVICE_FLASH",
-        "DEVICE_I2C",
-        "DEVICE_I2CSLAVE",
-        "DEVICE_INTERRUPTIN",
-        "DEVICE_LPTICKER",
-        "DEVICE_PORTIN",
-        "DEVICE_PORTINOUT",
-        "DEVICE_PORTOUT",
-        "DEVICE_PWMOUT",
-        "DEVICE_RTC",
-        "DEVICE_SERIAL",
-        "DEVICE_SERIAL_ASYNCH",
-        "DEVICE_SLEEP",
-        "DEVICE_SPI",
-        "DEVICE_SPISLAVE",
-        "DEVICE_SPI_ASYNCH",
-        "DEVICE_STDIO_MESSAGES",
-        "DEVICE_USTICKER",
     ] + @DEFINES@,
 )
 
