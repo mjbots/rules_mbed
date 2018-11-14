@@ -14,28 +14,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-cc_binary(
-    name = "example1",
-    srcs = [
-        "example1.cc",
-    ],
-    deps = [
-        "@com_github_ARMmbed_mbed-os//:mbed",
-        "@com_github_ARMmbed_mbed-os//:linker_script.ld",
-    ],
-    linkopts = ["-T $(location @com_github_ARMmbed_mbed-os//:linker_script.ld)"],
-    linkstatic = 1,
-    copts = [
-        "-Wno-register",
-        "-Wno-unused-parameter",
-    ],
+load("@com_github_ARMmbed_mbed-os//:rules.bzl", "mbed_binary")
+
+cc_library(
+    name = "common",
+    hdrs = ["common.h"],
+    srcs = ["common.cc"],
 )
 
-genrule(
-    name = "example1_bin",
-    srcs = [":example1"],
-    outs = ["example1.bin"],
-    tools = ["@com_arm_developer_gcc//:objcopy"],
-    cmd = "$(location @com_arm_developer_gcc//:objcopy) -O binary $< $@",
-    output_to_bindir = True,
+mbed_binary(
+    name = "example1",
+    srcs = ["example1.cc"],
+    deps = [":common"],
 )

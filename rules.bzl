@@ -14,17 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-load("//tools/workspace/arm_gcc:repository.bzl", "arm_gcc_repository")
-load("//tools/workspace/mbed:repository.bzl", "mbed_repository")
+load("//tools/workspace/default.bzl", "DEFAULT_CONFIG", "add_default_repositories")
+load("//tools/workspace/mbed:mbed", "mbed_binary")
 
-
-DEFAULT_CONFIG = {
-    "mbed_target": "targets/TARGET_STM/TARGET_STM32F4/TARGET_STM32F446xE/TARGET_NUCLEO_F446ZE",
-}
-
-def add_default_repositories(excludes = [], config = DEFAULT_CONFIG):
-    if "arm_gcc" not in excludes:
-        arm_gcc_repository(name = "com_arm_developer_gcc")
-    if "mbed" not in excludes:
-        mbed_repository(name = "com_github_ARMmbed_mbed-os",
-                        target = config["mbed_target"])
+def register(config = DEFAULT_CONFIG):
+    add_default_repositories(config)

@@ -253,6 +253,11 @@ def _impl(repository_ctx):
     }
 
     repository_ctx.template(
+        'rules.bzl',
+        repository_ctx.attr.rules_file,
+    )
+
+    repository_ctx.template(
         'BUILD',
         repository_ctx.attr.build_file_template,
         substitutions = substitutions,
@@ -264,6 +269,7 @@ _mbed_repository = repository_rule(
     implementation = _impl,
     attrs = {
         "build_file_template" : attr.label(allow_single_file = True),
+        "rules_file" : attr.label(allow_single_file = True),
         "target" : attr.string(),
         "config" : attr.string_dict(),
         "patches": attr.label_list(default = []),
@@ -275,12 +281,13 @@ _mbed_repository = repository_rule(
 
 def mbed_repository(
         name,
-        target = "targets/TARGET_STM/TARGET_STM32F4/TARGET_STM32F446xE/TARGET_NUCLEO_F446ZE",
+        target,
         config = None):
 
     _mbed_repository(
         name= name,
         build_file_template = Label("//tools/workspace/mbed:package.BUILD"),
+        rules_file = Label("//tools/workspace/mbed:rules.bzl"),
         target = target,
         config = config or DEFAULT_CONFIG,
     )

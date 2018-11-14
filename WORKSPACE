@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-workspace(name = "com_github_mjbots_stm32_bazel")
+workspace(name = "com_github_mjbots_rules_mbed")
 
 BAZEL_VERSION = "0.19.0"
 BAZEL_VERSION_SHA = "001371df816005e907670f483f810ee935176bdc811a5ffa2314c59766b68ec4"

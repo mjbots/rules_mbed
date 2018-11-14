@@ -12,16 +12,4 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <stdio.h>
-
-#include "common.h"
-#include "mbed.h"
-
-int main(int, char**) {
-  for (;;) {
-    printf("%d\n", do_work());
-    printf("hello there!\n");
-    wait(1.0);
-  }
-  return 0;
-}
+int do_work();
