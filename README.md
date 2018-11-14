@@ -1,14 +1,16 @@
 # mbed rules for Bazel #
 
-This package provides bazel rules for building binaries for mbed-os
-(https://github.com/ARMmbed/mbed-os) embedded targets.  It includes
-bazel configuration for the ARM-GCC toolchain, as well as dedicated
-bazel rules for building output binary files.  It supports multiple
-distinct mbed targets within the same build, as well as host-based
-automated tests using generic bazel rules such as `cc_test`.
+This package provides bazel (https://bazel.build) rules for building
+binaries for mbed-os (https://github.com/ARMmbed/mbed-os) embedded
+targets.  It includes bazel configuration for the ARM-GCC toolchain,
+as well as dedicated bazel rules for building output binary files.  It
+supports multiple distinct mbed targets within the same build, as well
+as host-based automated tests using generic bazel rules such as
+`cc_test`.
 
 * License: Apache 2.0
 * SemaphoreCI [![Build Status](https://semaphoreci.com/api/v1/jpieper/rules_mbed/branches/master/badge.svg)](https://semaphoreci.com/jpieper/rules_mbed)
+* Processors: Currently only STM32F4 family processors are supported
 
 ## Usage ##
 
