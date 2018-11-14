@@ -69,7 +69,7 @@ BAZEL_VERSION_SHA = get_workspace_var('BAZEL_VERSION_SHA')
 
 
 def download_bazel(dest):
-    dist_tempfile = tempfile.NamedTemporaryFile(suffix='.zip')
+    dist_tempfile = tempfile.NamedTemporaryFile(prefix='bazeldl-', delete=False)
 
     url = '{}/{}/bazel-{}-linux-x86_64'.format(
         BAZEL_REMOTE_SOURCE, BAZEL_VERSION, BAZEL_VERSION)
