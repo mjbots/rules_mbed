@@ -75,7 +75,7 @@ def mbed_binary(**kwargs):
     native.genrule(
         name = name,
         srcs = ["{}.elf".format(name)],
-        outs = ["{}.bin"],
+        outs = ["{}.bin".format(name)],
         tools = ["@com_arm_developer_gcc//:objcopy"],
         cmd = "$(location @com_arm_developer_gcc//:objcopy) -O binary $< $@",
         output_to_bindir = True

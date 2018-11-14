@@ -14,7 +14,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-load("//tools/workspace:default.bzl", "DEFAULT_CONFIG", "add_default_repositories")
+package(default_visibility = ["//visibility:public"])
 
-def mbed_register(config = DEFAULT_CONFIG):
-    add_default_repositories(config)
+environment(name = "k8")
+environment(name = "stm32f4")
+
+environment_group(
+    name = "cpus",
+    environments = [":k8", ":stm32f4"],
+    defaults = [":stm32f4"],
+)

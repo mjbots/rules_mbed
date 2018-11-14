@@ -285,7 +285,7 @@ def mbed_repository(
         config = None):
 
     _mbed_repository(
-        name= name,
+        name = name,
         build_file_template = Label("//tools/workspace/mbed:package.BUILD"),
         rules_file = Label("//tools/workspace/mbed:rules.bzl"),
         target = target,
