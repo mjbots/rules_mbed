@@ -7,6 +7,9 @@ bazel rules for building output binary files.  It supports multiple
 distinct mbed targets within the same build, as well as host-based
 automated tests using generic bazel rules such as `cc_test`.
 
+* License: Apache 2.0
+* SemaphoreCI [![Build Status](https://semaphoreci.com/api/v1/jpieper/rules_mbed/branches/master/badge.svg)](https://semaphoreci.com/jpieper/rules_mbed)
+
 ## Usage ##
 
 See https://github.com/mjbots/rules_mbed_example for a worked out
