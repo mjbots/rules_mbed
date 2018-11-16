@@ -19,8 +19,8 @@ package(default_visibility = ["//visibility:public"])
 cc_toolchain_suite(
     name = "toolchain",
     toolchains = {
-        "k8|clang": "cc_toolchain_linux",
-        "stm32f4|gcc": "cc_toolchain_armeabihf_stm32f4",
+        "k8|compiler": "cc_toolchain_linux",
+        "stm32f4|compiler": "cc_toolchain_armeabihf_stm32f4",
     },
 )
 

@@ -1,5 +1,5 @@
-build --compiler=gcc
-test --compiler=gcc
+build --compiler=compiler
+test --compiler=compiler
 
 build --crosstool_top=//tools/cc_toolchain:toolchain
 test --crosstool_top=//tools/cc_toolchain:toolchain

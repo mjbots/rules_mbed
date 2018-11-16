@@ -26,7 +26,7 @@ toolchain {
   abi_version: "local"
   abi_libc_version: "local"
   builtin_sysroot: ""
-  compiler: "gcc"
+  compiler: "compiler"
   host_system_name: "local"
   needsPic: false
   supports_gold_linker: false
@@ -122,7 +122,7 @@ toolchain {
   abi_version: "local"
   abi_libc_version: "local"
   builtin_sysroot: ""
-  compiler: "clang"
+  compiler: "compiler"
   host_system_name: "local"
   target_libc: "local"
   target_cpu: "k8"
