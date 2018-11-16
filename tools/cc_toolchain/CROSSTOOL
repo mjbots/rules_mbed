@@ -154,6 +154,8 @@ toolchain {
   cxx_builtin_include_directory: "external/org_llvm_clang/lib/clang/7.0.0/include/"
   cxx_builtin_include_directory: "/usr/include/"
 
+  # bazel currently insists on passing "-static-libgcc" for some reason
+  linker_flag: "-Wno-unused-command-line-argument"
 
   cxx_flag: "-std=c++17"
   cxx_flag: "-stdlib=libc++"
