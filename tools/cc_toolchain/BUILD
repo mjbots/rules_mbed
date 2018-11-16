@@ -19,7 +19,7 @@ package(default_visibility = ["//visibility:public"])
 cc_toolchain_suite(
     name = "toolchain",
     toolchains = {
-        "k8|gcc": "cc_toolchain_linux",
+        "k8|clang": "cc_toolchain_linux",
         "stm32f4|gcc": "cc_toolchain_armeabihf_stm32f4",
     },
 )
@@ -30,35 +30,53 @@ filegroup(
 )
 
 filegroup(
-    name = "everything",
+    name = "arm_everything",
     srcs = [
         "@com_arm_developer_gcc//:everything",
     ] + glob(["wrapper/arm-none-eabi-*"]),
 )
 
+filegroup(
+    name = "clang_wrappers",
+    srcs = glob(["wrapper/clang-*"]) + [
+        "@org_llvm_clang//:binaries",
+        "@org_llvm_clang//:clang_libs",
+    ],
+)
+
+filegroup(
+    name = "clang_all",
+    srcs = [
+        ":clang_wrappers",
+        "@org_llvm_clang//:includes",
+        "@org_llvm_clang//:runtime_libs",
+        "@org_llvm_clang//:static_libs",
+    ],
+)
+
 cc_toolchain(
     name = "cc_toolchain_linux",
-    all_files = ":empty",
-    compiler_files = ":empty",
+    all_files = ":clang_all",
+    compiler_files = ":clang_wrappers",
     cpu = "k8",
-    dwp_files = ":empty",
-    dynamic_runtime_libs = [":empty"],
-    linker_files = ":empty",
-    objcopy_files = ":empty",
-    static_runtime_libs = [":empty"],
-    strip_files = ":empty",
-    supports_param_files = 0,
+    dwp_files = ":clang_wrappers",
+    dynamic_runtime_libs = ["@org_llvm_clang//:runtime_libs"],
+    linker_files = ":clang_wrappers",
+    objcopy_files = ":clang_wrappers",
+    static_runtime_libs = ["@org_llvm_clang//:static_libs"],
+    strip_files = ":clang_wrappers",
+    supports_param_files = True,
     toolchain_identifier = "local_linux",
 )
 
 cc_toolchain(
     name = "cc_toolchain_armeabihf_stm32f4",
-    all_files = ":everything",
-    compiler_files = ":everything",
+    all_files = ":arm_everything",
+    compiler_files = ":arm_everything",
     cpu = "armeabihf",
     dwp_files = ":empty",
     dynamic_runtime_libs = [":empty"],
-    linker_files = ":everything",
+    linker_files = ":arm_everything",
     objcopy_files = ":empty",
     static_runtime_libs = [":empty"],
     strip_files = ":empty",

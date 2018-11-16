@@ -15,6 +15,7 @@
 # limitations under the License.
 
 load("//tools/workspace/arm_gcc:repository.bzl", "arm_gcc_repository")
+load("//tools/workspace/clang:repository.bzl", "clang_repository")
 load("//tools/workspace/mbed:repository.bzl", "mbed_repository")
 
 
@@ -28,3 +29,5 @@ def add_default_repositories(excludes = [], config = DEFAULT_CONFIG):
     if "mbed" not in excludes:
         mbed_repository(name = "com_github_ARMmbed_mbed-os",
                         target = config["mbed_target"])
+    if "clang" not in excludes:
+        clang_repository(name = "org_llvm_clang")

@@ -117,54 +117,54 @@ toolchain {
 }
 
 toolchain {
+  toolchain_identifier: "local_linux"
+
   abi_version: "local"
   abi_libc_version: "local"
   builtin_sysroot: ""
-  compiler: "gcc"
+  compiler: "clang"
   host_system_name: "local"
-  needsPic: true
-  supports_gold_linker: false
-  supports_incremental_linker: false
-  supports_fission: false
-  supports_interface_shared_objects: false
-  supports_normalizing_ar: false
-  supports_start_end_lib: false
   target_libc: "local"
   target_cpu: "k8"
   target_system_name: "local"
-  toolchain_identifier: "local_linux"
 
-  tool_path { name: "ar" path: "/usr/bin/ar" }
-  tool_path { name: "compat-ld" path: "/usr/bin/ld" }
-  tool_path { name: "cpp" path: "/usr/bin/cpp" }
-  tool_path { name: "dwp" path: "/usr/bin/dwp" }
-  tool_path { name: "gcc" path: "/usr/bin/gcc" }
-  cxx_flag: "-std=c++0x"
-  linker_flag: "-lstdc++"
+  tool_path { name: "ar" path: "wrapper/clang-ar" }
+  tool_path { name: "cpp" path: "wrapper/clang-cpp" }
+  tool_path { name: "dwp" path: "wrapper/clang-dwp" }
+  tool_path { name: "gcc" path: "wrapper/clang-clang" }
+  tool_path { name: "gcov" path: "" }
+  tool_path { name: "ld" path: "wrapper/clang-lld" }
+  tool_path { name: "nm" path: "wrapper/clang-nm" }
+  tool_path { name: "objcopy" path: "wrapper/clang-objcopy" }
+  tool_path { name: "objdump" path: "wrapper/clang-objdump" }
+  tool_path { name: "strip" path: "wrapper/clang-strip" }
 
-  # TODO(bazel-team): In theory, the path here ought to exactly match the path
-  # used by gcc. That works because bazel currently doesn't track files at
-  # absolute locations and has no remote execution, yet. However, this will need
-  # to be fixed, maybe with auto-detection?
-  cxx_builtin_include_directory: "/usr/lib/gcc/"
-  cxx_builtin_include_directory: "/usr/local/include"
-  cxx_builtin_include_directory: "/usr/include"
-  tool_path { name: "gcov" path: "/usr/bin/gcov" }
+  supports_gold_linker: false
+  supports_thin_archives: true
+  supports_start_end_lib: true
+  supports_interface_shared_objects: true
+  supports_embedded_runtimes: true
+  supports_incremental_linker: true
+  supports_normalizing_ar: true
+  supports_fission: true
+  needsPic: true
 
-  # C(++) compiles invoke the compiler (as that is the one knowing where
-  # to find libraries), but we provide LD so other rules can invoke the linker.
-  tool_path { name: "ld" path: "/usr/bin/ld" }
 
-  tool_path { name: "nm" path: "/usr/bin/nm" }
-  tool_path { name: "objcopy" path: "/usr/bin/objcopy" }
-  objcopy_embed_flag: "-I"
-  objcopy_embed_flag: "binary"
-  tool_path { name: "objdump" path: "/usr/bin/objdump" }
-  tool_path { name: "strip" path: "/usr/bin/strip" }
+  cxx_builtin_include_directory: "external/org_llvm_clang/include/"
+  cxx_builtin_include_directory: "external/org_llvm_clang/lib/clang/7.0.0/include/"
+  cxx_builtin_include_directory: "/usr/include/"
 
-  # Anticipated future default.
-  unfiltered_cxx_flag: "-no-canonical-prefixes"
-  unfiltered_cxx_flag: "-fno-canonical-system-headers"
+
+  cxx_flag: "-std=c++17"
+  cxx_flag: "-stdlib=libc++"
+
+  linker_flag: "-fuse-ld=lld"
+  linker_flag: "-rtlib=compiler-rt"
+  linker_flag: "-lm"
+  linker_flag: "-lpthread"
+  linker_flag: "-ldl"
+
+  objcopy_embed_flag: ["-I", "binary"]
 
   # Make C++ compilation deterministic. Use linkstamping instead of these
   # compiler symbols.
@@ -182,33 +182,29 @@ toolchain {
   compiler_flag: "-fstack-protector"
   linker_flag: "-Wl,-z,relro,-z,now"
 
-  # Enable coloring even if there's no attached terminal. Bazel removes the
-  # escape sequences if --nocolor is specified. This isn't supported by gcc
-  # on Ubuntu 14.04.
-  # compiler_flag: "-fcolor-diagnostics"
-
-  # All warnings are enabled. Maybe enable -Werror as well?
   compiler_flag: "-Wall"
-  # Enable a few more warnings that aren't part of -Wall.
-  compiler_flag: "-Wunused-but-set-parameter"
-  # But disable some that are problematic.
-  compiler_flag: "-Wno-free-nonheap-object" # has false positives
+  compiler_flag: "-Wextra"
+
+  unfiltered_cxx_flag: "-no-canonical-prefixes"
+  compiler_flag: "-no-canonical-prefixes"
 
   # Keep stack frames for debugging, even in opt mode.
   compiler_flag: "-fno-omit-frame-pointer"
 
-  # Anticipated future default.
-  linker_flag: "-no-canonical-prefixes"
-  # Have gcc return the exit code from ld.
-  linker_flag: "-pass-exit-codes"
-  # Gold linker only? Can we enable this by default?
-  # linker_flag: "-Wl,--warn-execstack"
-  # linker_flag: "-Wl,--detect-odr-violations"
-
   compilation_mode_flags {
     mode: DBG
     # Enable debug symbols.
-    compiler_flag: "-g"
+    compiler_flag: "-ggdb"
+    compiler_flag: "-fstandalone-debug"
+    linker_flag: "-ggdb"
+    compiler_flag: "-O0"
+  }
+  compilation_mode_flags {
+    mode: FASTBUILD
+    compiler_flag: "-ggdb"
+    compiler_flag: "-fstandalone-debug"
+    linker_flag: "-ggdb"
+    compiler_flag: "-O1"
   }
   compilation_mode_flags {
     mode: OPT
@@ -217,7 +213,9 @@ toolchain {
     # Maybe we should enable https://gcc.gnu.org/wiki/DebugFission for opt or
     # even generally? However, that can't happen here, as it requires special
     # handling in Bazel.
-    compiler_flag: "-g0"
+    compiler_flag: "-ggdb"
+    compiler_flag: "-fstandalone-debug"
+    linker_flag: "-ggdb"
 
     # Conservative choice for -O
     # -O3 can increase binary size and even slow down the resulting binaries.
@@ -232,5 +230,23 @@ toolchain {
     compiler_flag: "-fdata-sections"
     linker_flag: "-Wl,--gc-sections"
   }
-  linking_mode_flags { mode: DYNAMIC }
+
+    # This overrides the default runtime_library_search_directories because the default one uses
+    # $EXEC_ORIGIN which isn't supported on ubuntu 14.04 or 16.04
+    feature {
+        name: 'runtime_library_search_directories',
+        flag_set {
+            expand_if_all_available: 'runtime_library_search_directories'
+            action: 'c++-link-executable'
+            action: 'c++-link-dynamic-library'
+            action: 'c++-link-nodeps-dynamic-library'
+            flag_group {
+                iterate_over: 'runtime_library_search_directories'
+                flag_group {
+                    flag: '-Wl,-rpath,$ORIGIN/%{runtime_library_search_directories}'
+                }
+            }
+        }
+    }
+
 }
