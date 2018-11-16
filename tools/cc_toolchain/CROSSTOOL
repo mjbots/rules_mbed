@@ -157,6 +157,7 @@ toolchain {
 
   cxx_flag: "-std=c++17"
   cxx_flag: "-stdlib=libc++"
+  linker_flag: "-stdlib=libc++"
 
   linker_flag: "-fuse-ld=lld"
   linker_flag: "-rtlib=compiler-rt"
