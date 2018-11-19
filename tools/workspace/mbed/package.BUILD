@@ -70,5 +70,7 @@ genrule(
         "@com_arm_developer_gcc//:everything",
         "@com_arm_developer_gcc//:cpp",
     ],
-    cmd = "$(location @com_arm_developer_gcc//:cpp) -P $< -o $@",
+    cmd = "$(location @com_arm_developer_gcc//:cpp) -P {} $< -o $@".format(
+        " ".join(["-D{}".format(x) for x in @DEFINES@
+                  if x.find('|') == -1])),
 )

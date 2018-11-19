@@ -17,24 +17,41 @@
 def mbed_binary(**kwargs):
     deps = kwargs.pop("deps", [])
 
-    script = Label("//:linker_script.ld")
+    linker_override = kwargs.pop("linker_script", None)
 
     deps += [
         Label("//:mbed"),
-        script,
     ]
 
     srcs = kwargs.pop("srcs", [])
     linkopts = kwargs.pop("linkopts", [])
 
-    # We need the linker script to be properly expanded when passed to
-    # ld's "-T" option.  bazel claims it will do that, but it doesn't
-    # seem to work properly, maybe due to spanning an external
-    # repository boundary?  So for now, we just manually expand the
-    # pieces using GENDIR to get to the right place.
     linkopts += [
-        "-T $(GENDIR)/{}/{}".format(script.workspace_root, script.name),
+        "-L$(GENDIR)",
+    ]
 
+    # We always provide the mbed_script as a dependency, in case
+    # someone wants to include it.
+    mbed_script = Label("//:linker_script.ld")
+    deps += [mbed_script]
+    linkopts += ["-L$(GENDIR)"]
+
+    if linker_override:
+        script = linker_override
+        linkopts += ["-T $(location {})".format(script)]
+        deps += [script]
+    else:
+        # We need the linker script to be properly expanded when passed to
+        # ld's "-T" option.  bazel claims it will do that, but it doesn't
+        # seem to work properly, maybe due to spanning an external
+        # repository boundary?  So for now, we just manually expand the
+        # pieces using GENDIR to get to the right place.
+        linkopts += [
+            "-T $(GENDIR)/{}/{}".format(mbed_script.workspace_root,
+                                        mbed_script.name),
+        ]
+
+    linkopts += [
         # This will cause the mbed allocation wrapper object to not be
         # dropped on the floor.  (the mbed toolchain links everything as .o
         # files, with no intermediate .a files, so this isn't a problem
