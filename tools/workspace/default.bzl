@@ -21,13 +21,15 @@ load("//tools/workspace/mbed:repository.bzl", "mbed_repository")
 
 DEFAULT_CONFIG = {
     "mbed_target": "targets/TARGET_STM/TARGET_STM32F4/TARGET_STM32F446xE/TARGET_NUCLEO_F446ZE",
+    "mbed_config": None,
 }
 
-def add_default_repositories(excludes = [], config = DEFAULT_CONFIG):
+def add_default_repositories(*, config = DEFAULT_CONFIG, excludes = []):
     if "arm_gcc" not in excludes:
         arm_gcc_repository(name = "com_arm_developer_gcc")
     if "mbed" not in excludes:
         mbed_repository(name = "com_github_ARMmbed_mbed-os",
-                        target = config["mbed_target"])
+                        target = config["mbed_target"],
+                        config = config["mbed_config"])
     if "clang" not in excludes:
         clang_repository(name = "org_llvm_clang")

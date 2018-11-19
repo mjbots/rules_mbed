@@ -245,8 +245,16 @@ def _impl(repository_ctx):
 
         remaining_target = items[0]
 
+    my_config = {}
+    # It is annoying that bazel does not give us full featured dicts.
+    for key, value in DEFAULT_CONFIG.items():
+        my_config[key] = value
+    for key, value in repository_ctx.attr.config.items():
+        my_config[key] = value
+
+
     defines = ["{}={}".format(key, value)
-               for key, value in repository_ctx.attr.config.items()]
+               for key, value in my_config.items()]
 
     defines += _get_target_defines(repository_ctx, target)
 
