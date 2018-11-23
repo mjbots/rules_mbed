@@ -174,6 +174,7 @@ def _impl(repository_ctx):
         "events/equeue/equeue.c",
         "events/equeue/equeue_mbed.cpp",
         "hal/*.c",
+        "hal/*.cpp",
         "rtos/TARGET_CORTEX/*.c",
         "rtos/TARGET_CORTEX/*.cpp",
         "rtos/TARGET_CORTEX/rtx5/RTX/Source/*.c",
