@@ -146,6 +146,14 @@ def _impl(repository_ctx):
     patch(repository_ctx)
 
 
+    my_config = {}
+    # It is annoying that bazel does not give us full featured dicts.
+    for key, value in DEFAULT_CONFIG.items():
+        my_config[key] = value
+    for key, value in repository_ctx.attr.config.items():
+        my_config[key] = value
+
+
     # Since mbed is full of circular dependencies, we just construct
     # the full set of headers and sources here, then pass it down into
     # the BUILD file verbatim for using in a single bazel label.
@@ -161,46 +169,61 @@ def _impl(repository_ctx):
         "events/*.h",
         "events/equeue/*.h",
         "hal/*.h",
-        "rtos/*.h",
-        "rtos/TARGET_CORTEX/**/*.h",
     ]
+
+    enable_rtos = int(my_config["MBED_CONF_RTOS_PRESENT"]) != 0
+
+    if enable_rtos:
+        hdr_globs += [
+            "rtos/*.h",
+            "rtos/TARGET_CORTEX/**/*.h",
+        ]
 
     src_globs = [
         "platform/*.c",
         "platform/*.cpp",
         "drivers/*.cpp",
         "cmsis/TARGET_CORTEX_M/*.c",
-        "events/*.cpp",
-        "events/equeue/equeue.c",
-        "events/equeue/equeue_mbed.cpp",
         "hal/*.c",
         "hal/*.cpp",
-        "rtos/TARGET_CORTEX/*.c",
-        "rtos/TARGET_CORTEX/*.cpp",
-        "rtos/TARGET_CORTEX/rtx5/RTX/Source/*.c",
-        "rtos/TARGET_CORTEX/rtx5/Source/*.c",
-        "rtos/TARGET_CORTEX/rtx5/RTX/Source/TOOLCHAIN_GCC/TARGET_RTOS_M4_M7/*.S",
-        "rtos/TARGET_CORTEX/TOOLCHAIN_GCC_ARM/*.c",
-        "rtos/*.cpp",
     ]
+
+    if enable_rtos:
+        src_globs += [
+            "events/*.cpp",
+            "events/equeue/equeue.c",
+            "events/equeue/equeue_mbed.cpp",
+            "rtos/TARGET_CORTEX/*.c",
+            "rtos/TARGET_CORTEX/*.cpp",
+            "rtos/TARGET_CORTEX/rtx5/RTX/Source/*.c",
+            "rtos/TARGET_CORTEX/rtx5/Source/*.c",
+            "rtos/TARGET_CORTEX/rtx5/RTX/Source/TOOLCHAIN_GCC/TARGET_RTOS_M4_M7/*.S",
+            "rtos/TARGET_CORTEX/TOOLCHAIN_GCC_ARM/*.c",
+            "rtos/*.cpp",
+        ]
 
     includes = [
         ".",
         "platform",
         "drivers",
-        "events",
         "cmsis/TARGET_CORTEX_M",
         "cmsis".format(PREFIX),
         "hal".format(PREFIX),
-        "rtos".format(PREFIX),
-        "rtos/TARGET_CORTEX",
-        "rtos/TARGET_CORTEX/rtx4",
-        "rtos/TARGET_CORTEX/rtx5/Include",
-        "rtos/TARGET_CORTEX/rtx5/Source",
-        "rtos/TARGET_CORTEX/rtx5/RTX/Include",
-        "rtos/TARGET_CORTEX/rtx5/RTX/Source",
-        "rtos/TARGET_CORTEX/rtx5/RTX/Config",
     ]
+
+    if enable_rtos:
+        includes += [
+            "events",
+            "rtos".format(PREFIX),
+            "rtos/TARGET_CORTEX",
+            "rtos/TARGET_CORTEX/rtx4",
+            "rtos/TARGET_CORTEX/rtx5/Include",
+            "rtos/TARGET_CORTEX/rtx5/Source",
+            "rtos/TARGET_CORTEX/rtx5/RTX/Include",
+            "rtos/TARGET_CORTEX/rtx5/RTX/Source",
+            "rtos/TARGET_CORTEX/rtx5/RTX/Config",
+        ]
+
     copts = [
         "-Wno-unused-parameter",
         "-Wno-missing-field-initializers",
@@ -246,16 +269,10 @@ def _impl(repository_ctx):
 
         remaining_target = items[0]
 
-    my_config = {}
-    # It is annoying that bazel does not give us full featured dicts.
-    for key, value in DEFAULT_CONFIG.items():
-        my_config[key] = value
-    for key, value in repository_ctx.attr.config.items():
-        my_config[key] = value
-
 
     defines = ["{}={}".format(key, value)
-               for key, value in my_config.items()]
+               for key, value in my_config.items()
+               if value != "0"]
 
     defines += _get_target_defines(repository_ctx, target)
 
