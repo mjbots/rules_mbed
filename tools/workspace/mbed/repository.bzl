@@ -1,6 +1,6 @@
 # -*- python -*-
 
-# Copyright 2018 Josh Pieper, jjp@pobox.com.
+# Copyright 2018-2019 Josh Pieper, jjp@pobox.com.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -29,9 +29,10 @@ DEFAULT_CONFIG = {
     "MBED_CONF_EVENTS_SHARED_HIGHPRIO_STACKSIZE": "1024",
     "MBED_CONF_EVENTS_SHARED_STACKSIZE": "1024",
     "MBED_CONF_EVENTS_USE_LOWPOWER_TIMER_TICKER": "0",
+    "MBED_CONF_PLATFORM_CTHUNK_COUNT_MAX": "4",
     "MBED_CONF_PLATFORM_DEFAULT_SERIAL_BAUD_RATE": "9600",
     "MBED_CONF_PLATFORM_ERROR_ALL_THREADS_INFO": "0",
-    "MBED_CONF_PLATFORM_ERROR_DECODE_HTTP_URL_STR": r'\\\"\\\"',
+    "MBED_CONF_PLATFORM_ERROR_DECODE_HTTP_URL_STR": r'\\\"%d\\\"',
     "MBED_CONF_PLATFORM_ERROR_FILENAME_CAPTURE_ENABLED": "0",
     "MBED_CONF_PLATFORM_ERROR_HIST_ENABLED": "0",
     "MBED_CONF_PLATFORM_ERROR_HIST_SIZE": "4",
@@ -130,6 +131,10 @@ def _get_target_defines(repository_ctx, target_path):
         for item in to_remove:
             result.pop(item)
 
+    # I have no clue what this is, but we don't support it.
+    if "TARGET_PSA" in result:
+        result.pop("TARGET_PSA")
+
     return sorted(result.keys())
 
 
@@ -138,10 +143,10 @@ def _impl(repository_ctx):
 
     repository_ctx.download_and_extract(
         url = [
-            "https://github.com/ARMmbed/mbed-os/archive/mbed-os-5.10.3.tar.gz",
+            "https://github.com/ARMmbed/mbed-os/archive/mbed-os-5.11.5.tar.gz",
         ],
-        sha256 = "4bac626fe1a3c9d0134a8763d5d30bb33abe02cc33c51ef98ae1c2f41bc8f8e8",
-        stripPrefix = "mbed-os-mbed-os-5.10.3",
+        sha256 = "bfdfe893150e5563ed45bac7152c225ebf88623f9b14d86142fc74cb7c4f342d",
+        stripPrefix = "mbed-os-mbed-os-5.11.5",
     )
     patch(repository_ctx)
 
@@ -230,6 +235,7 @@ def _impl(repository_ctx):
         "-Wno-register",
         "-Wno-deprecated-declarations",
         "-Wno-sized-deallocation",
+        "-Wno-shift-negative-value",
     ]
 
     linker_script = ""
