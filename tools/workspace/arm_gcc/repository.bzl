@@ -21,9 +21,9 @@ def arm_gcc_repository(name):
     http_archive(
         name = name,
         urls = [
-            "https://armkeil.blob.core.windows.net/developer/Files/downloads/gnu-rm/7-2018q2/gcc-arm-none-eabi-7-2018-q2-update-linux.tar.bz2",
+            "https://armkeil.blob.core.windows.net/developer/Files/downloads/gnu-rm/8-2018q4/gcc-arm-none-eabi-8-2018-q4-major-linux.tar.bz2"
         ],
-        sha256 = "bb17109f0ee697254a5d4ae6e5e01440e3ea8f0277f2e8169bf95d07c7d5fe69",
-        strip_prefix = "gcc-arm-none-eabi-7-2018-q2-update",
+        sha256 = "fb31fbdfe08406ece43eef5df623c0b2deb8b53e405e2c878300f7a1f303ee52",
+        strip_prefix = "gcc-arm-none-eabi-8-2018-q4-major",
         build_file = Label("//tools/workspace/arm_gcc:package.BUILD"),
     )
