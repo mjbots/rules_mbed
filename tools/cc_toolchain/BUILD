@@ -1,6 +1,6 @@
 # -*- python -*-
 
-# Copyright 2018 Josh Pieper, jjp@pobox.com.
+# Copyright 2018-2019 Josh Pieper, jjp@pobox.com.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ cc_toolchain_suite(
     toolchains = {
         "k8|compiler": "cc_toolchain_linux",
         "stm32f4|compiler": "cc_toolchain_armeabihf_stm32f4",
+        "stm32f0|compiler": "cc_toolchain_armeabihf_stm32f0",
     },
 )
 
@@ -82,4 +83,19 @@ cc_toolchain(
     strip_files = ":empty",
     supports_param_files = 0,
     toolchain_identifier = "gcc-armeabihf-stm32f4",
+)
+
+cc_toolchain(
+    name = "cc_toolchain_armeabihf_stm32f0",
+    all_files = ":arm_everything",
+    compiler_files = ":arm_everything",
+    cpu = "armeabihf",
+    dwp_files = ":empty",
+    dynamic_runtime_libs = [":empty"],
+    linker_files = ":arm_everything",
+    objcopy_files = ":empty",
+    static_runtime_libs = [":empty"],
+    strip_files = ":empty",
+    supports_param_files = 0,
+    toolchain_identifier = "gcc-armeabihf-stm32f0",
 )

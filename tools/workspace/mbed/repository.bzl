@@ -32,7 +32,7 @@ DEFAULT_CONFIG = {
     "MBED_CONF_PLATFORM_CTHUNK_COUNT_MAX": "4",
     "MBED_CONF_PLATFORM_DEFAULT_SERIAL_BAUD_RATE": "9600",
     "MBED_CONF_PLATFORM_ERROR_ALL_THREADS_INFO": "0",
-    "MBED_CONF_PLATFORM_ERROR_DECODE_HTTP_URL_STR": r'\\\"%d\\\"',
+    "MBED_CONF_PLATFORM_ERROR_DECODE_HTTP_URL_STR": r'"%d"',
     "MBED_CONF_PLATFORM_ERROR_FILENAME_CAPTURE_ENABLED": "0",
     "MBED_CONF_PLATFORM_ERROR_HIST_ENABLED": "0",
     "MBED_CONF_PLATFORM_ERROR_HIST_SIZE": "4",
@@ -55,10 +55,14 @@ DEFAULT_CONFIG = {
 }
 
 
+def _escape(item):
+    return item.replace('"', r'\\\"')
+
+
 def _render_list(data):
     result = "[\n"
     for item in data:
-        result += ' "{}",\n'.format(item)
+        result += ' "{}",\n'.format(_escape(item))
     result += "]\n"
     return result
 
@@ -116,6 +120,31 @@ def _get_target_defines(repository_ctx, target_path):
         if "device_name" in item:
             this_stack[0] += ["TARGET_{}".format(item["device_name"])]
 
+        if "core" in item:
+            core = item.get("core")
+            if core == 'Cortex-M4F' or core == 'Cortex-M4':
+                this_stack[0] += [
+                    "ARM_MATH_CM4",
+                    "__CORTEX_M4",
+                    "TARGET_RTOS_M4_M7",
+                    "TARGET_LIKE_CORTEX_M4",
+                    "TARGET_M4",
+                    "TARGET_CORTEX_M",
+                    "TARGET_CORTEX",
+                ]
+            elif core == 'Cortex-M0':
+                this_stack[0] += [
+                    "ARM_MATH_CM0",
+                    "__CORTEX_M0",
+                    "TARGET_LIKE_CORTEX_M0",
+                    "TARGET_M0",
+                    "TARGET_CORTEX_M",
+                    "TARGET_CORTEX",
+                ]
+            elif core != None:
+                fail("Unknown core:" + core)
+
+
         this_stack[0] += item.get("macros", [])
         this_stack[0] += item.get("macros_add", [])
         this_stack[1] += item.get("macros_remove", [])
@@ -165,6 +194,20 @@ def _impl(repository_ctx):
 
     target = repository_ctx.attr.target
 
+    defines = ["{}={}".format(key, value)
+               for key, value in my_config.items()
+               if value != "0"]
+
+    defines += _get_target_defines(repository_ctx, target)
+
+    for key, value in my_config.items():
+        if value != "0":
+            continue
+
+        if key in defines:
+            defines.remove(key)
+
+
     hdr_globs = [
         "mbed.h",
         "platform/*.h",
@@ -202,10 +245,20 @@ def _impl(repository_ctx):
             "rtos/TARGET_CORTEX/*.cpp",
             "rtos/TARGET_CORTEX/rtx5/RTX/Source/*.c",
             "rtos/TARGET_CORTEX/rtx5/Source/*.c",
-            "rtos/TARGET_CORTEX/rtx5/RTX/Source/TOOLCHAIN_GCC/TARGET_RTOS_M4_M7/*.S",
             "rtos/TARGET_CORTEX/TOOLCHAIN_GCC_ARM/*.c",
             "rtos/*.cpp",
         ]
+        if "TARGET_M4" in defines:
+            src_globs += [
+                "rtos/TARGET_CORTEX/rtx5/RTX/Source/TOOLCHAIN_GCC/TARGET_RTOS_M4_M7/*.S",
+            ]
+        elif "TARGET_M0" in defines:
+            src_globs += [
+                "rtos/TARGET_CORTEX/rtx5/RTX/Source/TOOLCHAIN_GCC/TARGET_RTOS_M0/*.S",
+            ]
+        else:
+            fail("Unknown core")
+
 
     includes = [
         ".",
@@ -275,12 +328,6 @@ def _impl(repository_ctx):
 
         remaining_target = items[0]
 
-
-    defines = ["{}={}".format(key, value)
-               for key, value in my_config.items()
-               if value != "0"]
-
-    defines += _get_target_defines(repository_ctx, target)
 
     substitutions = {
         '@HDR_GLOBS@': _render_list(hdr_globs),

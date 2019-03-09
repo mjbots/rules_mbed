@@ -1,6 +1,6 @@
 # -*- python -*-
 
-# Copyright 2018 Josh Pieper, jjp@pobox.com.
+# Copyright 2018-2019 Josh Pieper, jjp@pobox.com.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -42,19 +42,6 @@ cc_library(
         "__MBED_CMSIS_RTOS_CM",
         "TOOLCHAIN_GCC",
         "TOOLCHAIN_GCC_ARM",
-
-        # TODO(jpieper): These defines are hard-coded for Cortex-M4
-        # cores.  If we want to support something else, we'll need to
-        # figure out how to derive it (and the associated source file
-        # changes) from targets.json or wherever that is supposed to
-        # come from.
-        "ARM_MATH_CM4",
-        "__CORTEX_M4",
-        "TARGET_RTOS_M4_M7",
-        "TARGET_CORTEX_M",
-        "TARGET_LIKE_CORTEX_M4",
-        "TARGET_M4",
-        "TARGET_CORTEX",
 
         "TARGET_RELEASE",
         "TARGET_LIKE_MBED",
