@@ -28,12 +28,13 @@ http_archive(
     name = "rules_mbed",
     url = "https://github.com/mjbots/bazel_deps/{}.zip".format(RULES_MBED_COMMIT),
     sha256 = "XXX",
-    strip_prefix = "rules_mbed-{}".format(commit),
+    strip_prefix = "rules_mbed-{}".format(RULES_MBED_COMMIT),
 )
 
 load("@rules_mbed//:rules.bzl", "mbed_register")
 mbed_register(config = {
-    "mbed_target": "targets/TARGET_STM/TARGET_STM32F4/TARGET_STM32F411xE/TARGET_NUCLEO_F466ZE",
+    "mbed_target": "targets/TARGET_STM/TARGET_STM32F4/TARGET_STM32F411xE/TARGET_NUCLEO_F411RE",
+    "mbed_config": None,
   }
 )
 ```
