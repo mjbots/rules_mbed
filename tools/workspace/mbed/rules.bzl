@@ -1,6 +1,6 @@
 # -*- python -*-
 
-# Copyright 2018 Josh Pieper, jjp@pobox.com.
+# Copyright 2018-2019 Josh Pieper, jjp@pobox.com.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,7 +14,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-def mbed_binary(**kwargs):
+def mbed_binary(enable_wrappers=True,
+                **kwargs):
+    '''enable_wrappers if true, wraps all the standard library functions
+    so that the mbed provided versions will be used instead.  This may
+    be disabled if you want to wrap them yourselves, or don't need all
+    of them.
+    '''
     deps = kwargs.pop("deps", [])
 
     linker_override = kwargs.pop("linker_script", None)
@@ -51,23 +57,24 @@ def mbed_binary(**kwargs):
                                         mbed_script.name),
         ]
 
-    linkopts += [
-        # This will cause the mbed allocation wrapper object to not be
-        # dropped on the floor.  (the mbed toolchain links everything as .o
-        # files, with no intermediate .a files, so this isn't a problem
-        # there).
-        "-Wl,--undefined=__wrap__free_r",
+    if enable_wrappers:
+        linkopts += [
+            # This will cause the mbed allocation wrapper object to not be
+            # dropped on the floor.  (the mbed toolchain links everything as .o
+            # files, with no intermediate .a files, so this isn't a problem
+            # there).
+            "-Wl,--undefined=__wrap__free_r",
 
-        # Hook in the mbed allocation wrappers.
-        "-Wl,--wrap,main",
-        "-Wl,--wrap,_malloc_r",
-        "-Wl,--wrap,_free_r",
-        "-Wl,--wrap,_realloc_r",
-        "-Wl,--wrap,_memalign_r",
-        "-Wl,--wrap,_calloc_r",
-        "-Wl,--wrap,exit",
-        "-Wl,--wrap,atexit",
-    ]
+            # Hook in the mbed allocation wrappers.
+            "-Wl,--wrap,main",
+            "-Wl,--wrap,_malloc_r",
+            "-Wl,--wrap,_free_r",
+            "-Wl,--wrap,_realloc_r",
+            "-Wl,--wrap,_memalign_r",
+            "-Wl,--wrap,_calloc_r",
+            "-Wl,--wrap,exit",
+            "-Wl,--wrap,atexit",
+        ]
 
     copts = kwargs.pop("copts", [])
 
