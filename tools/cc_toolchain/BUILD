@@ -16,12 +16,14 @@
 
 package(default_visibility = ["//visibility:public"])
 
+load(":cc_toolchain_config.bzl", "cc_toolchain_config", "cc_toolchain_config_stm32")
+
 cc_toolchain_suite(
     name = "toolchain",
     toolchains = {
         "k8|compiler": "cc_toolchain_linux",
-        "stm32f4|compiler": "cc_toolchain_armeabihf_stm32f4",
-        "stm32f0|compiler": "cc_toolchain_armeabihf_stm32f0",
+        "stm32f4|compiler": "cc_toolchain_stm32f4",
+        "stm32f0|compiler": "cc_toolchain_stm32f0",
     },
 )
 
@@ -55,47 +57,82 @@ filegroup(
     ],
 )
 
+cc_toolchain_config(
+    name = "clang-k8",
+    toolchain_identifier = "clang-k8",
+    cpu = "k8",
+    target_cpu = "k8",
+    target_system_name = "k8",
+    builtin_include_directories = [
+        "external/org_llvm_clang/include/",
+        "external/org_llvm_clang/lib/clang/7.0.0/include/",
+        "/usr/include/",
+    ],
+    host_compiler_prefix = "wrapper",
+    host_compiler_path = "wrapper/clang-clang",
+)
+
 cc_toolchain(
     name = "cc_toolchain_linux",
+    toolchain_identifier = "clang-x86_64",
     all_files = ":clang_all",
     compiler_files = ":clang_wrappers",
-    cpu = "k8",
     dwp_files = ":clang_wrappers",
-    dynamic_runtime_libs = ["@org_llvm_clang//:runtime_libs"],
     linker_files = ":clang_wrappers",
     objcopy_files = ":clang_wrappers",
-    static_runtime_libs = ["@org_llvm_clang//:static_libs"],
     strip_files = ":clang_wrappers",
     supports_param_files = True,
-    toolchain_identifier = "local_linux",
+    toolchain_config = ":clang-k8",
+    dynamic_runtime_lib = "@org_llvm_clang//:runtime_libs",
+    static_runtime_lib = "@org_llvm_clang//:static_libs",
+)
+
+cc_toolchain_config_stm32(
+    name = "gcc-stm32f0",
+    cpu = "stm32f0",
+    toolchain_identifier = "gcc-stm32f0",
+    host_compiler_prefix = "wrapper",
+    host_compiler_path = "wrapper/arm-none-eabi-g++",
+    builtin_include_directories = [
+        "external/com_arm_developer_gcc/arm-none-eabi/include/",
+        "external/com_arm_developer_gcc/arm-none-eabi/include/sys/",
+    ],
 )
 
 cc_toolchain(
-    name = "cc_toolchain_armeabihf_stm32f4",
+    name = "cc_toolchain_stm32f0",
     all_files = ":arm_everything",
     compiler_files = ":arm_everything",
-    cpu = "armeabihf",
     dwp_files = ":empty",
-    dynamic_runtime_libs = [":empty"],
     linker_files = ":arm_everything",
     objcopy_files = ":empty",
-    static_runtime_libs = [":empty"],
     strip_files = ":empty",
     supports_param_files = 0,
-    toolchain_identifier = "gcc-armeabihf-stm32f4",
+    toolchain_identifier = "gcc-stm32f0",
+    toolchain_config = ":gcc-stm32f0",
+)
+
+cc_toolchain_config_stm32(
+    name = "gcc-stm32f4",
+    cpu = "stm32f4",
+    toolchain_identifier = "gcc-stm32f4",
+    host_compiler_prefix = "wrapper",
+    host_compiler_path = "wrapper/arm-none-eabi-g++",
+    builtin_include_directories = [
+        "external/com_arm_developer_gcc/arm-none-eabi/include/",
+        "external/com_arm_developer_gcc/arm-none-eabi/include/sys/",
+    ],
 )
 
 cc_toolchain(
-    name = "cc_toolchain_armeabihf_stm32f0",
+    name = "cc_toolchain_stm32f4",
     all_files = ":arm_everything",
     compiler_files = ":arm_everything",
-    cpu = "armeabihf",
     dwp_files = ":empty",
-    dynamic_runtime_libs = [":empty"],
     linker_files = ":arm_everything",
     objcopy_files = ":empty",
-    static_runtime_libs = [":empty"],
     strip_files = ":empty",
     supports_param_files = 0,
-    toolchain_identifier = "gcc-armeabihf-stm32f0",
+    toolchain_identifier = "gcc-stm32f4",
+    toolchain_config = ":gcc-stm32f4",
 )
