@@ -9,8 +9,8 @@ as host-based automated tests using generic bazel rules such as
 `cc_test`.
 
 * License: Apache 2.0
-* SemaphoreCI [![Build Status](https://semaphoreci.com/api/v1/jpieper/rules_mbed/branches/master/badge.svg)](https://semaphoreci.com/jpieper/rules_mbed)
-* Processors: Currently only STM32F4 family processors are supported
+* travis-ci [![Build Status](https://travis-ci.org/mjbots/rules_mbed.svg?branch=master)](https://travis-ci.org/mjbots/rules_mbed)
+* Processors: Currently only STM32F0/4 family processors are supported
 
 ## Usage ##
 
