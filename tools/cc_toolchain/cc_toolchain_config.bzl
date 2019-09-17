@@ -200,8 +200,8 @@ def _make_common_features(ctx):
             flag_set(
                 actions = [ACTION_NAMES.c_compile, ACTION_NAMES.cpp_compile],
                 flag_groups = [flag_group(flags = [
-                    "-O1",
-                    "-ggdb",
+                    "-O0",
+                    "-g3",
                 ])],
             ),
         ],
@@ -468,7 +468,10 @@ def _impl(ctx):
                 actions = [ACTION_NAMES.c_compile, ACTION_NAMES.cpp_compile],
                 flag_groups = [
                     flag_group(
-                        flags = ["-ggdb", "-O2", "-ffunction-sections", "-fdata-sections"],
+                        flags = ["-ggdb",
+                                 "-O2",
+                                 "-ffunction-sections",
+                                 "-fdata-sections"],
                     ),
                 ],
             ),
