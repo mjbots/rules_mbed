@@ -172,10 +172,10 @@ def _impl(repository_ctx):
 
     repository_ctx.download_and_extract(
         url = [
-            "https://github.com/ARMmbed/mbed-os/archive/mbed-os-5.11.5.tar.gz",
+            "https://github.com/ARMmbed/mbed-os/archive/mbed-os-5.13.4.tar.gz",
         ],
-        sha256 = "bfdfe893150e5563ed45bac7152c225ebf88623f9b14d86142fc74cb7c4f342d",
-        stripPrefix = "mbed-os-mbed-os-5.11.5",
+        sha256 = "5c291c1df779834224437043e2274bd1b54216b01e145c1754ac6cd8890cb12e",
+        stripPrefix = "mbed-os-mbed-os-5.13.4",
     )
     patch(repository_ctx)
 
@@ -210,7 +210,7 @@ def _impl(repository_ctx):
 
     hdr_globs = [
         "mbed.h",
-        "platform/*.h",
+        "platform/**/*.h",
         "drivers/*.h",
         "cmsis/*.h",
         "cmsis/TARGET_CORTEX_M/*.h",
@@ -228,8 +228,8 @@ def _impl(repository_ctx):
         ]
 
     src_globs = [
-        "platform/*.c",
-        "platform/*.cpp",
+        "platform/**/*.c",
+        "platform/**/*.cpp",
         "drivers/*.cpp",
         "cmsis/TARGET_CORTEX_M/*.c",
         "hal/*.c",
@@ -375,4 +375,6 @@ def mbed_repository(
         rules_file = Label("//tools/workspace/mbed:rules.bzl"),
         target = target,
         config = config or DEFAULT_CONFIG,
+        patches = [Label("//tools/workspace/mbed:mbed.patch"),],
+        patch_args = ["-p1"],
     )
