@@ -15,6 +15,7 @@
 # limitations under the License.
 
 load("@com_github_ARMmbed_mbed-os//:rules.bzl", "mbed_binary")
+load("@com_github_ARMmbed_mbed-os_g474//:rules.bzl", mbed_g4_binary="mbed_binary")
 
 cc_library(
     name = "common",
@@ -24,6 +25,12 @@ cc_library(
 
 mbed_binary(
     name = "example1",
+    srcs = ["example1.cc"],
+    deps = [":common"],
+)
+
+mbed_g4_binary(
+    name = "g4_example1",
     srcs = ["example1.cc"],
     deps = [":common"],
 )

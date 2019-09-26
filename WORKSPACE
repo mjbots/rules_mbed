@@ -20,5 +20,17 @@ BAZEL_VERSION = "0.28.1"
 BAZEL_VERSION_SHA = "daa27fbf9213b3dbc8509a8481f7d99cce6815cf54c50d5d3af5ec2b4c41d31f"
 
 load("//tools/workspace:default.bzl", "add_default_repositories")
+load("//tools/workspace/mbed:repository.bzl", "mbed_repository")
 
 add_default_repositories()
+
+
+mbed_repository(
+    name = "com_github_ARMmbed_mbed-os_g474",
+    target = "targets/TARGET_STM/TARGET_STM32G4/TARGET_STM32G474xE/TARGET_NUCLEO_G474RE",
+    config = {
+        "MBED_CONF_RTOS_PRESENT": "0",
+        "DEVICE_STDIO_MESSAGES": "0",
+        "MBED_CONF_TARGET_CONSOLE_UART": "1",
+    },
+)

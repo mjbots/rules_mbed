@@ -18,9 +18,12 @@
 #include "mbed.h"
 
 int main(int, char**) {
+  DigitalOut led(LED1);
+
   for (;;) {
     printf("%d\n", do_work());
     printf("hello there!\n");
+    led.write(!led.read());
     wait(1.0);
   }
   return 0;

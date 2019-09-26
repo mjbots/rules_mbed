@@ -328,6 +328,9 @@ def _impl(repository_ctx):
 
         remaining_target = items[0]
 
+    if linker_script == "":
+        fail("Could not find linker script")
+
 
     substitutions = {
         '@HDR_GLOBS@': _render_list(hdr_globs),
@@ -375,6 +378,9 @@ def mbed_repository(
         rules_file = Label("//tools/workspace/mbed:rules.bzl"),
         target = target,
         config = config or DEFAULT_CONFIG,
-        patches = [Label("//tools/workspace/mbed:mbed.patch"),],
+        patches = [
+            Label("//tools/workspace/mbed:mbed.patch"),
+            Label("//tools/workspace/mbed:stm32g4.patch"),
+        ],
         patch_args = ["-p1"],
     )
