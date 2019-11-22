@@ -49,6 +49,14 @@ filegroup(
 )
 
 filegroup(
+    name = "clang_compiler",
+    srcs = [
+        ":clang_wrappers",
+        "@org_llvm_clang//:includes",
+    ],
+)
+
+filegroup(
     name = "clang_all",
     srcs = [
         ":clang_wrappers",
@@ -66,7 +74,7 @@ cc_toolchain_config(
     target_system_name = "k8",
     builtin_include_directories = [
         "external/org_llvm_clang/include/",
-        "external/org_llvm_clang/lib/clang/7.0.0/include/",
+        "external/org_llvm_clang/lib/clang/9.0.0/include/",
         "/usr/include/",
     ],
     host_compiler_prefix = "wrapper",
@@ -77,7 +85,7 @@ cc_toolchain(
     name = "cc_toolchain_linux",
     toolchain_identifier = "clang-x86_64",
     all_files = ":clang_all",
-    compiler_files = ":clang_wrappers",
+    compiler_files = ":clang_compiler",
     dwp_files = ":clang_wrappers",
     linker_files = ":clang_wrappers",
     ar_files = ":clang_wrappers",
