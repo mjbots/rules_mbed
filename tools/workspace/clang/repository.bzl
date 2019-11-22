@@ -21,9 +21,9 @@ def clang_repository(name):
     http_archive(
         name = name,
         urls = [
-            "http://releases.llvm.org/8.0.0/clang+llvm-8.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz",
+            "http://releases.llvm.org/9.0.0/clang+llvm-9.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz",
         ],
-        sha256 = "87b88d620284d1f0573923e6f7cc89edccf11d19ebaec1cfb83b4f09ac5db09c",
-        strip_prefix = "clang+llvm-8.0.0-x86_64-linux-gnu-ubuntu-16.04",
+        sha256 = "5c1473c2611e1eac4ed1aeea5544eac5e9d266f40c5623bbaeb1c6555815a27d",
+        strip_prefix = "clang+llvm-9.0.0-x86_64-linux-gnu-ubuntu-16.04",
         build_file = Label("//tools/workspace/clang:package.BUILD"),
     )
