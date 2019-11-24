@@ -21,7 +21,7 @@ def mbed_binary(enable_wrappers=True,
     be disabled if you want to wrap them yourselves, or don't need all
     of them.
     '''
-    deps = kwargs.pop("deps", [])
+    deps = kwargs.pop("deps", [])[:]
 
     linker_override = kwargs.pop("linker_script", None)
 
@@ -29,8 +29,8 @@ def mbed_binary(enable_wrappers=True,
         Label("//:mbed"),
     ]
 
-    srcs = kwargs.pop("srcs", [])
-    linkopts = kwargs.pop("linkopts", [])
+    srcs = kwargs.pop("srcs", [])[:]
+    linkopts = kwargs.pop("linkopts", [])[:]
 
     linkopts += [
         "-L$(GENDIR)",
@@ -76,7 +76,7 @@ def mbed_binary(enable_wrappers=True,
             "-Wl,--wrap,atexit",
         ]
 
-    copts = kwargs.pop("copts", [])
+    copts = kwargs.pop("copts", [])[:]
 
     # The mbed headers can't handle these warnings.
     copts += [
