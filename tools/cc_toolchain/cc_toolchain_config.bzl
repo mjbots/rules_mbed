@@ -742,7 +742,7 @@ def _stm32_impl(ctx):
             target_system_name = ctx.attr.target_system_name,
             target_cpu = ctx.attr.target_cpu,
             target_libc = "libc",
-            compiler = "clang",
+            compiler = "gcc",
             abi_version = "local",
             abi_libc_version = "local",
             tool_paths = tool_paths,
