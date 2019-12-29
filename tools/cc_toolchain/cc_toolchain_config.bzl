@@ -487,6 +487,18 @@ def _impl(ctx):
         implies = ["common"],
     )
 
+    debuginfo_feature = feature(
+        name = "debuginfo",
+        flag_sets = [
+            flag_set(
+                actions = ALL_COMPILE_ACTIONS + ALL_LINK_ACTIONS,
+                flag_groups = [flag_group(flags= [
+                    "-fno-limit-debug-info",
+                ])],
+            ),
+        ],
+    )
+
     common_feature = feature(
         name = "common",
         implies = [
@@ -500,6 +512,7 @@ def _impl(ctx):
             "lld",
             "frame-pointer",
             "static_link_cpp_runtimes",
+            "debuginfo",
         ]
     )
 
@@ -511,6 +524,7 @@ def _impl(ctx):
         common_feature,
         lld_feature,
         opt_feature,
+        debuginfo_feature,
         runtime_library_search_directories,
     ]
 
