@@ -337,6 +337,16 @@ def _make_common_features(ctx):
         ],
     )
 
+    result['cpp20_feature'] = feature(
+        name = "c++20",
+        flag_sets = [
+            flag_set(
+                actions = ALL_CPP_ACTIONS,
+                flag_groups = [flag_group(flags = ["-std=c++2a"])],
+            ),
+        ],
+    )
+
     result['no-rtti'] = feature(
         name = "no-rtti",
         flag_sets = [
@@ -503,7 +513,7 @@ def _impl(ctx):
         name = "common",
         implies = [
             "stdlib",
-            "c++17",
+            "c++20",
             "determinism",
             "hardening",
             "warnings",
@@ -706,7 +716,7 @@ def _stm32_impl(ctx):
         name = "common",
         implies = [
             "stdlib",
-            "c++17",
+            "c++20",
             "determinism",
             "warnings",
             "no-canonical-prefixes",
