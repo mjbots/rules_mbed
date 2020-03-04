@@ -25,6 +25,7 @@ load(
     "tool",
     "tool_path",
     "variable_with_value",
+    "with_feature_set",
 )
 
 load(
@@ -527,13 +528,13 @@ def _impl(ctx):
     )
 
     features = common.values() + [
+        opt_feature,
         static_libgcc,
         pic_feature,
         supports_pic_feature,
         stdlib_feature,
         common_feature,
         lld_feature,
-        opt_feature,
         debuginfo_feature,
         runtime_library_search_directories,
     ]
@@ -627,6 +628,39 @@ def _stm32_impl(ctx):
         ],
     )
 
+    speedopt_feature = feature(
+        name = "speedopt",
+        flag_sets = [
+            flag_set(
+                actions = [ACTION_NAMES.c_compile, ACTION_NAMES.cpp_compile],
+                flag_groups = [
+                    flag_group(
+                        flags = ["-O3"],
+                    ),
+                ],
+            ),
+        ],
+    )
+
+    sizeopt_feature = feature(
+        name = "sizeopt",
+        flag_sets = [
+            flag_set(
+                actions = [ACTION_NAMES.c_compile, ACTION_NAMES.cpp_compile],
+                flag_groups = [
+                    flag_group(
+                        flags = ["-Os"],
+                    ),
+                ],
+                with_features = [
+                    with_feature_set(
+                        not_features = ['speedopt'],
+                    ),
+                ],
+            ),
+        ],
+    )
+
     opt_feature = feature(
         name = "opt",
         flag_sets = [
@@ -635,7 +669,6 @@ def _stm32_impl(ctx):
                 flag_groups = [
                     flag_group(
                         flags = ["-g",
-                                 "-Os",
                                  "-ffunction-sections",
                                  "-fdata-sections"],
                     ),
@@ -650,7 +683,7 @@ def _stm32_impl(ctx):
                 flag_groups = [flag_group(flags = ["-Wl,--gc-sections"])],
             ),
         ],
-        implies = ["common"],
+        implies = ["common", "sizeopt"],
     )
 
     stm32_feature = feature(
@@ -726,9 +759,11 @@ def _stm32_impl(ctx):
     )
 
     features = common.values() + [
+        speedopt_feature,
+        sizeopt_feature,
+        opt_feature,
         stdlib_feature,
         common_feature,
-        opt_feature,
         stm32_feature,
         stm32f0_feature,
         stm32f4_feature,
