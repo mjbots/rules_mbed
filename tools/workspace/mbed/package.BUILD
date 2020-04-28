@@ -47,6 +47,7 @@ cc_library(
         "TARGET_LIKE_MBED",
 
     ] + @DEFINES@,
+    features = ["noimplicitfunction"],
 )
 
 genrule(

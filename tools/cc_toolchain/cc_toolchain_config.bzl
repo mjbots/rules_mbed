@@ -661,6 +661,34 @@ def _stm32_impl(ctx):
         ],
     )
 
+    noimplicitfunction_feature = feature(
+        name = "noimplicitfunction",
+        flag_sets = [
+            flag_set(
+                actions = [ACTION_NAMES.c_compile],
+                flag_groups = [
+                    flag_group(
+                        flags = ["-Wno-implicit-function-declaration"],
+                    ),
+                ],
+            ),
+        ],
+    )
+
+    nomaybe_uninitialized_feature = feature(
+        name = "nomaybe_uninitialized",
+        flag_sets = [
+            flag_set(
+                actions = [ACTION_NAMES.c_compile, ACTION_NAMES.cpp_compile],
+                flag_groups = [
+                    flag_group(
+                        flags = ["-Wno-error=maybe-uninitialized"],
+                    ),
+                ],
+            ),
+        ],
+    )
+
     opt_feature = feature(
         name = "opt",
         flag_sets = [
@@ -762,6 +790,8 @@ def _stm32_impl(ctx):
         speedopt_feature,
         sizeopt_feature,
         opt_feature,
+        nomaybe_uninitialized_feature,
+        noimplicitfunction_feature,
         stdlib_feature,
         common_feature,
         stm32_feature,
