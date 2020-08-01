@@ -1,6 +1,6 @@
 # -*- python -*-
 
-# Copyright 2018-2019 Josh Pieper, jjp@pobox.com.
+# Copyright 2018-2020 Josh Pieper, jjp@pobox.com.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 
 workspace(name = "com_github_mjbots_rules_mbed")
 
-BAZEL_VERSION = "2.2.0"
-BAZEL_VERSION_SHA = "b2f002ea0e6194a181af6ac84cd94bd8dc797722eb2354690bebac92dda233ff"
+BAZEL_VERSION = "3.4.1"
+BAZEL_VERSION_SHA = "1a64c807716e10c872f1618852d95f4893d81667fe6e691ef696489103c9b460"
 
 load("//tools/workspace:default.bzl", "add_default_repositories")
 load("//tools/workspace/mbed:repository.bzl", "mbed_repository")
