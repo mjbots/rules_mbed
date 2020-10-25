@@ -16,7 +16,8 @@
 
 package(default_visibility = ["//visibility:public"])
 
-load(":cc_toolchain_config.bzl", "cc_toolchain_config", "cc_toolchain_config_stm32")
+load(":cc_toolchain_config.bzl", "cc_toolchain_config_stm32")
+load("@rules_cc//cc:defs.bzl", "cc_toolchain")
 
 cc_toolchain_suite(
     name = "toolchain",
@@ -40,66 +41,8 @@ filegroup(
     ] + glob(["wrapper/arm-none-eabi-*"]),
 )
 
-filegroup(
-    name = "clang_wrappers",
-    srcs = glob(["wrapper/clang-*"]) + [
-        "@org_llvm_clang//:binaries",
-        "@org_llvm_clang//:clang_libs",
-    ],
-)
-
-filegroup(
-    name = "clang_compiler",
-    srcs = [
-        ":clang_wrappers",
-        "@org_llvm_clang//:includes",
-    ],
-)
-
-filegroup(
-    name = "clang_all",
-    srcs = [
-        ":clang_wrappers",
-        "@org_llvm_clang//:includes",
-        "@org_llvm_clang//:runtime_libs",
-        "@org_llvm_clang//:static_libs",
-    ],
-)
-
-cc_toolchain_config(
-    name = "clang-k8",
-    toolchain_identifier = "clang-k8",
-    cpu = "k8",
-    target_cpu = "k8",
-    target_system_name = "k8",
-    builtin_include_directories = [
-        "external/org_llvm_clang/include/",
-        "external/org_llvm_clang/lib/clang/9.0.0/include/",
-        "/usr/include/",
-    ],
-    host_compiler_prefix = "wrapper",
-    host_compiler_path = "wrapper/clang-clang",
-)
-
-cc_toolchain(
-    name = "cc_toolchain_linux",
-    toolchain_identifier = "clang-x86_64",
-    all_files = ":clang_all",
-    compiler_files = ":clang_compiler",
-    dwp_files = ":clang_wrappers",
-    linker_files = ":clang_wrappers",
-    ar_files = ":clang_wrappers",
-    as_files = ":clang_wrappers",
-    objcopy_files = ":clang_wrappers",
-    strip_files = ":clang_wrappers",
-    supports_param_files = True,
-    toolchain_config = ":clang-k8",
-    dynamic_runtime_lib = "@org_llvm_clang//:runtime_libs",
-    static_runtime_lib = "@org_llvm_clang//:static_libs",
-)
-
 cc_toolchain_config_stm32(
-    name = "gcc-stm32f0",
+    name = "gcc-stm32f0-config",
     cpu = "stm32f0",
     toolchain_identifier = "gcc-stm32f0",
     host_compiler_prefix = "wrapper",
@@ -111,22 +54,33 @@ cc_toolchain_config_stm32(
 )
 
 cc_toolchain(
-    name = "cc_toolchain_stm32f0",
+    name = "gcc-stm32f0",
     all_files = ":arm_everything",
     compiler_files = ":arm_everything",
-    dwp_files = ":empty",
+    dwp_files = ":arm_everything",
     linker_files = ":arm_everything",
+    objcopy_files = ":arm_everything",
+    strip_files = ":arm_everything",
     ar_files = ":arm_everything",
     as_files = ":arm_everything",
-    objcopy_files = ":empty",
-    strip_files = ":empty",
     supports_param_files = 0,
-    toolchain_identifier = "gcc-stm32f0",
-    toolchain_config = ":gcc-stm32f0",
+    toolchain_config = ":gcc-stm32f0-config",
+)
+
+toolchain(
+    name = "cc_toolchain_stm32f0",
+    exec_compatible_with = [
+        "@platforms//cpu:x86_64",
+    ],
+    target_compatible_with = [
+        "//cpu:stm32f0",
+    ],
+    toolchain = ":gcc-stm32f0",
+    toolchain_type = "@bazel_tools//tools/cpp:toolchain_type",
 )
 
 cc_toolchain_config_stm32(
-    name = "gcc-stm32f4",
+    name = "gcc-stm32f4-config",
     cpu = "stm32f4",
     toolchain_identifier = "gcc-stm32f4",
     host_compiler_prefix = "wrapper",
@@ -138,22 +92,33 @@ cc_toolchain_config_stm32(
 )
 
 cc_toolchain(
-    name = "cc_toolchain_stm32f4",
+    name = "gcc-stm32f4",
     all_files = ":arm_everything",
     compiler_files = ":arm_everything",
-    dwp_files = ":empty",
+    dwp_files = ":arm_everything",
     linker_files = ":arm_everything",
+    objcopy_files = ":arm_everything",
+    strip_files = ":arm_everything",
     ar_files = ":arm_everything",
     as_files = ":arm_everything",
-    objcopy_files = ":empty",
-    strip_files = ":empty",
     supports_param_files = 0,
-    toolchain_identifier = "gcc-stm32f4",
-    toolchain_config = ":gcc-stm32f4",
+    toolchain_config = ":gcc-stm32f4-config",
+)
+
+toolchain(
+    name = "cc_toolchain_stm32f4",
+    exec_compatible_with = [
+        "@platforms//cpu:x86_64",
+    ],
+    target_compatible_with = [
+        "//cpu:stm32f4",
+    ],
+    toolchain = ":gcc-stm32f4",
+    toolchain_type = "@bazel_tools//tools/cpp:toolchain_type",
 )
 
 cc_toolchain_config_stm32(
-    name = "gcc-stm32g4",
+    name = "gcc-stm32g4-config",
     cpu = "stm32g4",
     toolchain_identifier = "gcc-stm32g4",
     host_compiler_prefix = "wrapper",
@@ -165,16 +130,27 @@ cc_toolchain_config_stm32(
 )
 
 cc_toolchain(
-    name = "cc_toolchain_stm32g4",
+    name = "gcc-stm32g4",
     all_files = ":arm_everything",
     compiler_files = ":arm_everything",
-    dwp_files = ":empty",
+    dwp_files = ":arm_everything",
     linker_files = ":arm_everything",
+    objcopy_files = ":arm_everything",
+    strip_files = ":arm_everything",
     ar_files = ":arm_everything",
     as_files = ":arm_everything",
-    objcopy_files = ":empty",
-    strip_files = ":empty",
     supports_param_files = 0,
-    toolchain_identifier = "gcc-stm32g4",
-    toolchain_config = ":gcc-stm32g4",
+    toolchain_config = ":gcc-stm32g4-config",
+)
+
+toolchain(
+    name = "cc_toolchain_stm32g4",
+    exec_compatible_with = [
+        "@platforms//cpu:x86_64",
+    ],
+    target_compatible_with = [
+        "//cpu:stm32g4",
+    ],
+    toolchain = ":gcc-stm32g4",
+    toolchain_type = "@bazel_tools//tools/cpp:toolchain_type",
 )

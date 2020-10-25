@@ -4,18 +4,13 @@ This package provides bazel (https://bazel.build) rules for building
 binaries for mbed-os (https://github.com/ARMmbed/mbed-os) embedded
 targets.  It includes bazel configuration for the ARM-GCC toolchain,
 as well as dedicated bazel rules for building output binary files.  It
-supports multiple distinct mbed targets within the same build, as well
-as host-based automated tests using generic bazel rules such as
-`cc_test`.
+supports multiple distinct mbed targets within the same build.
 
 * License: Apache 2.0
 * travis-ci [![Build Status](https://travis-ci.org/mjbots/rules_mbed.svg?branch=master)](https://travis-ci.org/mjbots/rules_mbed)
-* Processors: Currently only STM32F0/4 family processors are supported
+* Processors: STM32F0, STM32F4, and STM32G4 family processors
 
 ## Usage ##
-
-See https://github.com/mjbots/rules_mbed_example for a worked out
-example:
 
 In `WORKSPACE` add this:
 
@@ -48,4 +43,11 @@ mbed_binary(
   name = "example",
   srcs = ["example.cc"],
 )
+```
+
+And in your bazelrc you can list:
+
+```
+build --incompatible_enable_cc_toolchain_resolution
+build --platforms=@rules_mbed//:stm32f4
 ```
