@@ -19,13 +19,15 @@ package(default_visibility = ["//visibility:public"])
 load(":cc_toolchain_config.bzl", "cc_toolchain_config_stm32")
 load("@rules_cc//cc:defs.bzl", "cc_toolchain")
 
+# We keep this around so that users can work around
+# https://github.com/bazelbuild/bazel/issues/12036 by specifying an
+# otherwise unused crosstool_top.
 cc_toolchain_suite(
     name = "toolchain",
     toolchains = {
-        "k8|compiler": "cc_toolchain_linux",
-        "stm32g4|compiler": "cc_toolchain_stm32g4",
-        "stm32f4|compiler": "cc_toolchain_stm32f4",
-        "stm32f0|compiler": "cc_toolchain_stm32f0",
+        "stm32g4|compiler": "gcc-stm32g4",
+        "stm32f4|compiler": "gcc-stm32f4",
+        "stm32f0|compiler": "gcc-stm32f0",
     },
 )
 
