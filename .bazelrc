@@ -1,8 +1,7 @@
+build --incompatible_enable_cc_toolchain_resolution
 build --compiler=compiler
-test --compiler=compiler
-
-build --crosstool_top=//tools/cc_toolchain:toolchain
-test --crosstool_top=//tools/cc_toolchain:toolchain
-
 build --nostart_end_lib
-test --nostart_end_lib
+
+build:stm32f4 --cpu=stm32f4
+build:stm32f4 --platforms=//:stm32f4
+build:stm32f4 --crosstool_top=//tools/cc_toolchain:toolchain

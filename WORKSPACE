@@ -19,11 +19,10 @@ workspace(name = "com_github_mjbots_rules_mbed")
 BAZEL_VERSION = "3.4.1"
 BAZEL_VERSION_SHA = "1a64c807716e10c872f1618852d95f4893d81667fe6e691ef696489103c9b460"
 
-load("//tools/workspace:default.bzl", "add_default_repositories")
+load("//:rules.bzl", "mbed_register")
 load("//tools/workspace/mbed:repository.bzl", "mbed_repository")
 
-add_default_repositories()
-
+mbed_register()
 
 mbed_repository(
     name = "com_github_ARMmbed_mbed-os_g474",

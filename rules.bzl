@@ -16,7 +16,7 @@
 
 load("//tools/workspace:default.bzl", "DEFAULT_CONFIG", "add_default_repositories")
 
-def mbed_register(config = None):
+def mbed_register(config = DEFAULT_CONFIG):
     add_default_repositories(config=config)
 
     native.register_toolchains(
