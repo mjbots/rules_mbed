@@ -453,6 +453,34 @@ def _stm32_impl(ctx):
         ],
     )
 
+    novolatileerror_feature = feature(
+        name = "novolatileerror",
+        flag_sets = [
+            flag_set(
+                actions = [ACTION_NAMES.cpp_compile],
+                flag_groups = [
+                    flag_group(
+                        flags = ["-Wno-volatile"],
+                    ),
+                ],
+            ),
+        ],
+    )
+
+    notypelimits_feature = feature(
+        name = "no-type-limits",
+        flag_sets = [
+            flag_set(
+                actions = [ACTION_NAMES.cpp_compile],
+                flag_groups = [
+                    flag_group(
+                        flags = ["-Wno-type-limits"],
+                    ),
+                ],
+            ),
+        ],
+    )
+
     nomaybe_uninitialized_feature = feature(
         name = "nomaybe_uninitialized",
         flag_sets = [
@@ -559,6 +587,8 @@ def _stm32_impl(ctx):
             "determinism",
             "warnings",
             "no-canonical-prefixes",
+            "novolatileerror",
+            "no-type-limits",
         ] + (["stm32f0"] if ctx.attr.cpu == "stm32f0" else []) + (
              ["stm32f4"] if ctx.attr.cpu == "stm32f4" else []) + (
              ["stm32g4"] if ctx.attr.cpu == "stm32g4" else [])
@@ -570,6 +600,8 @@ def _stm32_impl(ctx):
         opt_feature,
         nomaybe_uninitialized_feature,
         noimplicitfunction_feature,
+        novolatileerror_feature,
+        notypelimits_feature,
         stdlib_feature,
         common_feature,
         stm32_feature,
