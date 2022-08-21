@@ -1,6 +1,6 @@
 # -*- python -*-
 
-# Copyright 2018-2019 Josh Pieper, jjp@pobox.com.
+# Copyright 2018-2022 Josh Pieper, jjp@pobox.com.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,10 +21,9 @@ def arm_gcc_repository(name):
     http_archive(
         name = name,
         urls = [
-            #"https://developer.arm.com/-/media/Files/downloads/gnu-rm/8-2019q3/RC1.1/gcc-arm-none-eabi-8-2019-q3-update-linux.tar.bz2",
-            "https://developer.arm.com/-/media/Files/downloads/gnu/11.2-2022.02/binrel/gcc-arm-11.2-2022.02-x86_64-arm-none-eabi.tar.xz",
+            "https://developer.arm.com/-/media/Files/downloads/gnu/11.3.rel1/binrel/arm-gnu-toolchain-11.3.rel1-x86_64-arm-none-eabi.tar.xz",
         ],
-        sha256 = "8c5acd5ae567c0100245b0556941c237369f210bceb196edfe5a2e7532c60326",
-        strip_prefix = "gcc-arm-11.2-2022.02-x86_64-arm-none-eabi",
+        sha256 = "d420d87f68615d9163b99bbb62fe69e85132dc0a8cd69fca04e813597fe06121",
+        strip_prefix = "arm-gnu-toolchain-11.3.rel1-x86_64-arm-none-eabi",
         build_file = Label("//tools/workspace/arm_gcc:package.BUILD"),
     )
