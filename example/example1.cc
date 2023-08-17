@@ -28,3 +28,9 @@ int main(int, char**) {
   }
   return 0;
 }
+
+extern "C" {
+  void abort() {
+    mbed_die();
+  }
+}
