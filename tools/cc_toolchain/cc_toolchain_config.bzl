@@ -554,7 +554,7 @@ def _stm32_impl(ctx):
                 actions = ALL_COMPILE_ACTIONS + ALL_LINK_ACTIONS,
                 flag_groups = [flag_group(flags= [
                     "-mthumb",
-                    "-mfloat-abi=softfp",
+                    "-mfloat-abi=hard",
                 ])],
             ),
         ],
