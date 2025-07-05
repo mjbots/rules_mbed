@@ -453,6 +453,20 @@ def _stm32_impl(ctx):
         ],
     )
 
+    nostdlib_feature = feature(
+        name = "nostdlib",
+        flag_sets = [
+            flag_set(
+                actions = [ACTION_NAMES.c_compile, ACTION_NAMES.cpp_compile],
+                flag_groups = [
+                    flag_group(
+                        flags = ["-nostdlib"],
+                    ),
+                ],
+            ),
+        ],
+    )
+
     novolatileerror_feature = feature(
         name = "novolatileerror",
         flag_sets = [
@@ -518,6 +532,19 @@ def _stm32_impl(ctx):
             ),
         ],
         implies = ["common", "sizeopt"],
+    )
+
+    nanospecs_feature = feature(
+        name = "nanospecs",
+        flag_sets = [
+            flag_set(
+                actions = ALL_LINK_ACTIONS,
+                flag_groups = [flag_group(flags= [
+                    "--specs=nano.specs",
+                    "--specs=nosys.specs",
+                ])],
+            ),
+        ],
     )
 
     stm32_feature = feature(
@@ -608,6 +635,8 @@ def _stm32_impl(ctx):
         stm32f0_feature,
         stm32f4_feature,
         stm32g4_feature,
+        nanospecs_feature,
+        nostdlib_feature,
     ]
 
     cxx_builtin_include_directories = ctx.attr.builtin_include_directories
