@@ -21,9 +21,9 @@ def arm_gcc_repository(name):
     http_archive(
         name = name,
         urls = [
-            "https://developer.arm.com/-/media/Files/downloads/gnu/11.3.rel1/binrel/arm-gnu-toolchain-11.3.rel1-x86_64-arm-none-eabi.tar.xz",
+            "https://developer.arm.com/-/media/Files/downloads/gnu/14.3.rel1/binrel/arm-gnu-toolchain-14.3.rel1-x86_64-arm-none-eabi.tar.xz",
         ],
-        sha256 = "d420d87f68615d9163b99bbb62fe69e85132dc0a8cd69fca04e813597fe06121",
-        strip_prefix = "arm-gnu-toolchain-11.3.rel1-x86_64-arm-none-eabi",
+        sha256 = "8f6903f8ceb084d9227b9ef991490413014d991874a1e34074443c2a72b14dbd",
+        strip_prefix = "arm-gnu-toolchain-14.3.rel1-x86_64-arm-none-eabi",
         build_file = Label("//tools/workspace/arm_gcc:package.BUILD"),
     )
