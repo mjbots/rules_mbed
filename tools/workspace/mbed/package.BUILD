@@ -37,7 +37,6 @@ cc_library(
     defines = [
         "_RTE_",
         "__MBED__",
-        "__FPU_PRESENT",
         "__CMSIS_RTOS",
         "__MBED_CMSIS_RTOS_CM",
         "TOOLCHAIN_GCC",
